@@ -4,6 +4,12 @@ An open-source MCU pin & peripheral allocation visualizer
 
 **核心目标：** 为无专用可视化配置工具的 MCU（如沁恒等）提供网页版引脚管理界面，解决引脚复用查询难、分配易冲突的问题。
 
+## 预览:
+
+[https://duruofu.github.io/PinMuxLab](https://duruofu.github.io/PinMuxLab)
+
+![image-20260128150224097](attachments/image-20260128150224097.png)
+
 ## 需求：
 
 参考：[基础需求分析](./docs/基础需求,md)
