@@ -1,0 +1,187 @@
+{
+  "meta": {
+    "vendor": "WCH",
+    "family": "CH32V003",
+    "name": "CH32V003A4M6",
+    "core": "RISC-V",
+    "package": "SOP16",
+    "datasheet": "https://www.wch.cn/products/CH32V003A4M6.html"
+  },
+
+  "package": {
+    "type": "SOP16",
+    "pinCount": 16,
+    "pins": [
+      { "number": 1, "name": "PC1" },
+      { "number": 2, "name": "PC2" },
+      { "number": 3, "name": "PC3" },
+      { "number": 4, "name": "PC4" },
+      { "number": 5, "name": "PC6" },
+      { "number": 6, "name": "PC7" },
+      { "number": 7, "name": "PD1" },
+      { "number": 8, "name": "PD4" },
+      { "number": 9, "name": "PD5" },
+      { "number": 10, "name": "PD6" },
+      { "number": 11, "name": "PD7" },
+      { "number": 12, "name": "PA1" },
+      { "number": 13, "name": "PA2" },
+      { "number": 14, "name": "VSS" },
+      { "number": 15, "name": "VDD" },
+      { "number": 16, "name": "PC0" }
+    ]
+  },
+
+  "pins": {
+    "VDD": {
+      "type": "power",
+      "fixed": true,
+      "functions": ["VDD"]
+    },
+    "VSS": {
+      "type": "gnd",
+      "fixed": true,
+      "functions": ["GND"]
+    },
+    "PC0": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": ["GPIO", "TIM2_CH3", "UART1_TX", "SPI1_NSS", "TIM1_CH3"]
+    },
+    "PC1": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": ["GPIO", "I2C1_SDA", "SPI1_NSS", "TIM2_CH4", "TIM2_ETR", "TIM1_BKIN", "UART1_RX"]
+    },
+    "PC2": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": ["GPIO", "I2C1_SCL", "UART1_RTS", "TIM1_BKIN", "TIM1_ETR", "TIM2_CH2"]
+    },
+    "PC3": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": ["GPIO", "TIM1_CH3", "TIM1_CH1N", "UART1_CTS"]
+    },
+    "PC4": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": ["GPIO", "ADC_IN2", "TIM1_CH4", "MCO", "TIM1_CH1N"]
+    },
+    "PC6": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": ["GPIO", "SPI1_MOSI", "TIM1_CH1", "TIM1_CH3N", "UART1_CTS", "I2C1_SDA"]
+    },
+    "PC7": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": ["GPIO", "SPI1_MISO", "TIM1_CH2", "TIM2_CH2", "UART1_RTS"]
+    },
+    "PD1": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": ["GPIO", "SWIO", "TIM1_ETR2", "TIM1_CH3N", "I2C1_SCL", "UART1_RX"]
+    },
+    "PD4": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": ["GPIO", "ADC_IN7", "TIM2_ETR", "COMP_OUT", "TIM1_CH4ETR"]
+    },
+    "PD5": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": ["GPIO", "ADC_IN5", "UART1_TX", "TIM2_CH4", "UART1_RX"]
+    },
+    "PD6": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": ["GPIO", "ADC_IN6", "UART1_RX", "TIM2_CH3", "UART1_TX"]
+    },
+    "PD7": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": ["GPIO", "NRST", "TIM2_CH4", "COMP1_OUT", "TIM1_ETR"]
+    },
+    "PA1": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": ["GPIO", "OSC_IN", "ADC_IN1", "TIM1_CH2", "COMP1_INP"]
+    },
+    "PA2": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": ["GPIO", "OSC_OUT", "ADC_IN0", "TIM1_CH2N", "COMP1_INM", "TIM1_ETR2"]
+    }
+  },
+
+  "peripherals": {
+    "UART1": {
+      "type": "uart",
+      "signals": {
+        "TX": ["PC0", "PD5", "PD6"],
+        "RX": ["PC1", "PD1", "PD5", "PD6"],
+        "CTS": ["PC3", "PC6"],
+        "RTS": ["PC2", "PC7"]
+      }
+    },
+    "SPI1": {
+      "type": "spi",
+      "signals": {
+        "NSS": ["PC0", "PC1"],
+        "SCK": ["PC5"],
+        "MISO": ["PC7"],
+        "MOSI": ["PC6"]
+      }
+    },
+    "I2C1": {
+      "type": "i2c",
+      "signals": {
+        "SDA": ["PC1", "PC6"],
+        "SCL": ["PC2", "PD1"]
+      }
+    },
+    "ADC1": {
+      "type": "adc",
+      "signals": {
+        "IN0": ["PA2"],
+        "IN1": ["PA1"],
+        "IN2": ["PC4"],
+        "IN5": ["PD5"],
+        "IN6": ["PD6"],
+        "IN7": ["PD4"]
+      }
+    },
+    "TIM1": {
+      "type": "timer",
+      "signals": {
+        "CH1": ["PC6"],
+        "CH1N": ["PC4", "PC3"],
+        "CH2": ["PA1", "PC7"],
+        "CH2N": ["PA2"],
+        "CH3": ["PC0", "PC3"],
+        "CH3N": ["PC6", "PD1"],
+        "CH4": ["PC4"],
+        "ETR": ["PC2", "PD7"],
+        "ETR2": ["PA2", "PD1"],
+        "BKIN": ["PC1", "PC2"]
+      }
+    },
+    "TIM2": {
+      "type": "timer",
+      "signals": {
+        "CH2": ["PC2", "PC7"],
+        "CH3": ["PC0", "PD6"],
+        "CH4": ["PC1", "PD5", "PD7"],
+        "ETR": ["PC2", "PD4"]
+      }
+    },
+    "COMP1": {
+      "type": "comparator",
+      "signals": {
+        "INP": ["PA1"],
+        "INM": ["PA2"],
+        "OUT": ["PD4", "PD7"]
+      }
+    }
+  }
+}

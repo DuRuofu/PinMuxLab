@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import type { PackageInfo, ChipMeta } from '@/types/chip'
-import { calculateQuadLayout, type RenderedPin } from '@/utils/packageLayout'
+import type { PackageInfo, ChipMeta, PinCapability } from '@/types/chip'
+import { calculateLayout, type RenderedPin } from '@/utils/packageLayout'
 
 const props = defineProps<{
   packageInfo: PackageInfo
   chipMeta?: ChipMeta
   pinConfigurations?: Record<string, string>
+  pinCapabilities?: Record<string, PinCapability>
 }>()
 
 const emit = defineEmits<{
@@ -17,6 +18,20 @@ const emit = defineEmits<{
 // 判断引脚是否已配置
 function isPinConfigured(pinName: string): boolean {
   return !!props.pinConfigurations?.[pinName]
+}
+
+// 判断引脚是否为固定功能 (Special Pin)
+function isPinFixed(pinName: string): boolean {
+  const cap = props.pinCapabilities?.[pinName]
+  return !!cap?.fixed
+}
+
+// 获取引脚类型用于样式
+function getPinTypeClass(pinName: string): string {
+  const cap = props.pinCapabilities?.[pinName]
+  if (!cap) return ''
+  // 返回 pin-type-power, pin-type-gnd, pin-type-reset 等
+  return `pin-type-${cap.type}`
 }
 
 // 缩放控制
@@ -75,8 +90,7 @@ function resetZoom() {
 // 计算布局
 const layout = computed(() => {
   if (!props.packageInfo) return null
-  // 目前默认都使用 QuadFlat 布局 (QFN/LQFP)
-  return calculateQuadLayout(props.packageInfo)
+  return calculateLayout(props.packageInfo)
 })
 
 function handlePinClick(pin: RenderedPin) {
@@ -84,6 +98,7 @@ function handlePinClick(pin: RenderedPin) {
 }
 
 function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
+  if (isPinFixed(pin.name)) return
   emit('pin-contextmenu', pin, event)
 }
 </script>
@@ -115,11 +130,20 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
         rx="4"
       />
 
+      <!-- Pin 1 标识 -->
+      <circle
+        v-if="layout.pin1Mark"
+        :cx="layout.pin1Mark.cx"
+        :cy="layout.pin1Mark.cy"
+        :r="layout.pin1Mark.r"
+        class="pin1-mark"
+      />
+
       <!-- 芯片信息 (居中显示) -->
       <g v-if="chipMeta" class="chip-info-group">
         <text 
           :x="layout.width / 2" 
-          :y="layout.height / 2 - 8" 
+          :y="layout.height / 2 - 18" 
           text-anchor="middle" 
           class="chip-vendor"
         >
@@ -127,12 +151,21 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
         </text>
         <text 
           :x="layout.width / 2" 
-          :y="layout.height / 2 + 8" 
+          :y="layout.height / 2" 
           text-anchor="middle" 
-          dominant-baseline="hanging"
+          dominant-baseline="middle"
           class="chip-name"
         >
           {{ chipMeta.name }}
+        </text>
+        <text 
+          :x="layout.width / 2" 
+          :y="layout.height / 2 + 18" 
+          text-anchor="middle" 
+          dominant-baseline="hanging"
+          class="chip-package-name"
+        >
+          {{ chipMeta.package }}
         </text>
       </g>
 
@@ -143,6 +176,7 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
         class="pin-group" 
         @click.stop="handlePinClick(pin)"
         @contextmenu.prevent.stop="handlePinRightClick(pin, $event)"
+        :class="{ 'is-fixed-pin': isPinFixed(pin.name) }"
       >
         <!-- 引脚形状 -->
         <rect
@@ -151,7 +185,10 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
           :width="pin.width"
           :height="pin.height"
           class="pin-shape"
-          :class="{ 'is-configured': isPinConfigured(pin.name) }"
+          :class="[
+            { 'is-configured': isPinConfigured(pin.name) },
+            getPinTypeClass(pin.name)
+          ]"
         />
         
         <!-- 引脚名称 -->
@@ -255,6 +292,17 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
   font-weight: bold;
 }
 
+.chip-package-name {
+  fill: #aaa;
+  font-size: 10px;
+  font-weight: normal;
+}
+
+.pin1-mark {
+  fill: #fff;
+  opacity: 0.8;
+}
+
 .pin-group {
   cursor: pointer;
   transition: opacity 0.2s;
@@ -276,8 +324,37 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
   stroke: #2c3e50;
 }
 
+/* Special Pin Types */
+.pin-shape.pin-type-power {
+  fill: #ff7875; /* Red */
+}
+.pin-shape.pin-type-gnd {
+  fill: #595959; /* Dark Gray */
+  stroke: #262626;
+}
+.pin-shape.pin-type-reset {
+  fill: #faad14; /* Orange/Yellow */
+}
+.pin-shape.pin-type-boot {
+  fill: #b37feb; /* Purple */
+}
+
 .pin-group:hover .pin-shape {
-  fill: #66cc99; /* Hover 时稍微亮一点 */
+  fill: #e6f7ff;
+}
+
+/* Hover states for special pins */
+.pin-group:hover .pin-shape.pin-type-power {
+  fill: #ff9c6e;
+}
+.pin-group:hover .pin-shape.pin-type-gnd {
+  fill: #8c8c8c;
+}
+.pin-group:hover .pin-shape.pin-type-reset {
+  fill: #ffc53d;
+}
+.pin-group:hover .pin-shape.pin-type-boot {
+  fill: #d3adf7;
 }
 
 .pin-label {

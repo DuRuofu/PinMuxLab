@@ -32,6 +32,12 @@ export interface PackageLayout {
     height: number
   }
   pins: RenderedPin[]
+  /** Pin 1 标识点坐标 */
+  pin1Mark?: {
+    cx: number
+    cy: number
+    r: number
+  }
 }
 
 /**
@@ -48,9 +54,9 @@ export function calculateQuadLayout(pkg: PackageInfo): PackageLayout {
   const { pinCount, pins } = pkg
   
   // 配置参数 (单位：无量纲 SVG 坐标)
-  const PIN_WIDTH = 40 // 30 -> 40
-  const PIN_HEIGHT = 15 // 10 -> 15
-  const PIN_SPACING = 20 // 15 -> 20
+  const PIN_WIDTH = 60 // 30 -> 40 -> 48
+  const PIN_HEIGHT = 36 // 10 -> 15 -> 24
+  const PIN_SPACING = 28 // 15 -> 20 -> 28
   const BODY_PADDING = 30 // 20 -> 30
   // const LABEL_OFFSET = 5 // 文字距离引脚的距离 (不再需要，因为文字在框内)
   
@@ -75,6 +81,12 @@ export function calculateQuadLayout(pkg: PackageInfo): PackageLayout {
       y: bodyStart,
       width: bodySize,
       height: bodySize
+    },
+    // Pin 1 标识位于左上角
+    pin1Mark: {
+      cx: bodyStart + 15,
+      cy: bodyStart + 15,
+      r: 4
     },
     pins: []
   }
@@ -144,4 +156,119 @@ export function calculateQuadLayout(pkg: PackageInfo): PackageLayout {
   })
 
   return layout
+}
+
+/**
+ * 计算双列直插/贴片封装 (DIP/SOP/TSSOP) 的布局
+ * 假设引脚逆时针排列，起始点在左上角
+ * 
+ * 布局顺序：
+ * 1. 左侧 (Left): 从上到下 (Pin 1 ~ N/2)
+ * 2. 右侧 (Right): 从下到上 (Pin N/2+1 ~ N)
+ */
+export function calculateDualLayout(pkg: PackageInfo): PackageLayout {
+  const { pinCount, pins } = pkg
+  
+  // 配置参数
+  const PIN_WIDTH = 50 // 引脚长度
+  const PIN_HEIGHT = 16 // 引脚宽度 (垂直方向)
+  const PIN_SPACING = 24 // 引脚间距
+  const BODY_PADDING_X = 40 // 芯片主体横向内边距
+  const BODY_PADDING_Y = 30 // 芯片主体纵向内边距
+  const BODY_WIDTH = 120 // 芯片主体宽度 (固定或根据内容调整)
+
+  // 每边引脚数
+  const pinsPerSide = Math.ceil(pinCount / 2)
+  
+  // 计算芯片主体高度
+  const contentHeight = pinsPerSide * PIN_SPACING
+  const bodyHeight = contentHeight + BODY_PADDING_Y * 2
+  
+  // 画布总尺寸
+  const totalWidth = BODY_WIDTH + PIN_WIDTH * 2 + 100
+  const totalHeight = bodyHeight + 100
+  
+  const bodyX = (totalWidth - BODY_WIDTH) / 2
+  const bodyY = (totalHeight - bodyHeight) / 2
+  
+  const layout: PackageLayout = {
+    width: totalWidth,
+    height: totalHeight,
+    body: {
+      x: bodyX,
+      y: bodyY,
+      width: BODY_WIDTH,
+      height: bodyHeight
+    },
+    // Pin 1 标识位于左上角
+    pin1Mark: {
+      cx: bodyX + 15,
+      cy: bodyY + 15,
+      r: 4
+    },
+    pins: []
+  }
+
+  // 计算引脚起始 Y 坐标 (垂直居中分布)
+  const startY = bodyY + (bodyHeight - contentHeight) / 2 + PIN_SPACING / 2
+
+  pins.forEach((pin, index) => {
+    // 0: Left side, 1: Right side
+    const sideIndex = index < pinsPerSide ? 0 : 1
+    const indexInSide = sideIndex === 0 ? index : (index - pinsPerSide)
+    
+    let x = 0, y = 0, w = 0, h = 0
+    let lx = 0, ly = 0
+    
+    // Y 坐标计算
+    // Left: 从上到下 -> startY + index * spacing
+    // Right: 从下到上 -> startY + (pinsPerSide - 1 - index) * spacing
+    const yOffset = sideIndex === 0 
+      ? indexInSide * PIN_SPACING
+      : (pinsPerSide - 1 - indexInSide) * PIN_SPACING
+      
+    y = startY + yOffset - PIN_HEIGHT / 2
+    h = PIN_HEIGHT
+    w = PIN_WIDTH
+
+    if (sideIndex === 0) {
+      // Left
+      x = bodyX - w
+    } else {
+      // Right
+      x = bodyX + BODY_WIDTH
+    }
+
+    // Label
+    lx = x + w / 2
+    ly = y + h / 2
+
+    layout.pins.push({
+      ...pin,
+      x, y, width: w, height: h,
+      labelX: lx,
+      labelY: ly,
+      textAnchor: 'middle',
+      dominantBaseline: 'middle',
+      rotation: 0
+    })
+  })
+
+  return layout
+}
+
+/**
+ * 通用布局计算函数
+ */
+export function calculateLayout(pkg: PackageInfo): PackageLayout {
+  // 简单判断：如果类型包含 QFN, QFP, LQFP 等，使用 Quad 布局
+  // 如果包含 SOP, DIP, TSSOP 等，使用 Dual 布局
+  const type = pkg.type.toUpperCase()
+  
+  if (type.includes('SOP') || type.includes('DIP')) {
+    return calculateDualLayout(pkg)
+  }
+  
+  // 默认 QFN/QFP
+  return calculateQuadLayout(pkg)
 }

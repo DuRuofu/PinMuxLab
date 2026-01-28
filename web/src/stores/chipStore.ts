@@ -11,7 +11,33 @@ export const useChipStore = defineStore('chip', () => {
   // Actions
   function loadChip(data: ChipDefinition) {
     currentChip.value = data
-    pinConfigurations.value = {} // 重置配置
+    // 尝试从 localStorage 加载配置
+    const storageKey = `pinmux_config_${data.meta.name}`
+    const savedConfig = localStorage.getItem(storageKey)
+    if (savedConfig) {
+      try {
+        pinConfigurations.value = JSON.parse(savedConfig)
+      } catch (e) {
+        console.error('Failed to parse saved configuration', e)
+        pinConfigurations.value = {}
+      }
+    } else {
+      pinConfigurations.value = {} // 重置配置
+    }
+  }
+
+  function saveConfigurations() {
+    if (!currentChip.value) return
+    const storageKey = `pinmux_config_${currentChip.value.meta.name}`
+    localStorage.setItem(storageKey, JSON.stringify(pinConfigurations.value))
+  }
+
+  function clearConfigurations() {
+    pinConfigurations.value = {}
+    if (currentChip.value) {
+      const storageKey = `pinmux_config_${currentChip.value.meta.name}`
+      localStorage.removeItem(storageKey)
+    }
   }
 
   function setPinFunction(pinName: string, func: string) {
@@ -21,17 +47,18 @@ export const useChipStore = defineStore('chip', () => {
     if (!func) {
       const { [pinName]: _, ...rest } = pinConfigurations.value
       pinConfigurations.value = rest
-      return
-    }
-
-    // 检查该引脚是否支持该功能
-    const supported = getPinFunctions(pinName)
-    if (supported.includes(func)) {
-      pinConfigurations.value = {
-        ...pinConfigurations.value,
-        [pinName]: func
+    } else {
+      // 检查该引脚是否支持该功能
+      const supported = getPinFunctions(pinName)
+      if (supported.includes(func)) {
+        pinConfigurations.value = {
+          ...pinConfigurations.value,
+          [pinName]: func
+        }
       }
     }
+    // 保存到 localStorage
+    saveConfigurations()
   }
 
   function getPinConfiguration(pinName: string): string | undefined {
@@ -74,6 +101,7 @@ export const useChipStore = defineStore('chip', () => {
     getPinFunctions,
     getPinType,
     setPinFunction,
-    getPinConfiguration
+    getPinConfiguration,
+    clearConfigurations
   }
 })

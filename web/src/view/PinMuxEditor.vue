@@ -5,8 +5,9 @@ import ChipPackage from '@/components/ChipPackage.vue'
 import type { RenderedPin } from '@/utils/packageLayout'
 import { exportConfigurationToCSV } from '@/utils/exportUtils'
 
-// 导入示例数据
-import ch32v003Data from '@/assets/WCH_CH32V003F4U6_QFN20.json'
+// 导入芯片数据 (Vite Glob Import)
+const chipModules = import.meta.glob('@/assets/*.json', { eager: true })
+const chipList = Object.values(chipModules).map((mod: any) => mod.default || mod)
 
 const chipStore = useChipStore()
 const selectedPin = ref<RenderedPin | null>(null)
@@ -20,9 +21,11 @@ const contextMenuPin = ref<RenderedPin | null>(null)
 const contextMenuFunctions = ref<string[]>([])
 
 onMounted(() => {
-  // 模拟从文件/API 加载
-  console.log('Loading Chip Data...', ch32v003Data)
-  chipStore.loadChip(ch32v003Data as any)
+  // 默认加载第一个芯片
+  if (chipList.length > 0) {
+    console.log('Loading Default Chip...', chipList[0])
+    chipStore.loadChip(chipList[0] as any)
+  }
   
   // Close context menu on global click
   window.addEventListener('click', () => {
@@ -30,9 +33,29 @@ onMounted(() => {
   })
 })
 
+function onChipSelect(event: Event) {
+  const select = event.target as HTMLSelectElement
+  const chipName = select.value
+  const chipData = chipList.find(c => c.meta.name === chipName)
+  if (chipData) {
+    chipStore.loadChip(chipData)
+    // 重置选中状态
+    selectedPin.value = null
+    selectedPinFunctions.value = []
+  }
+}
+
+
 function onExportCSV() {
   if (!chipStore.currentChip) return
   exportConfigurationToCSV(chipStore.currentChip, chipStore.pinConfigurations)
+}
+
+function onClearConfig() {
+  if (Object.keys(chipStore.pinConfigurations).length === 0) return
+  if (confirm('Are you sure you want to clear all configurations?')) {
+    chipStore.clearConfigurations()
+  }
 }
 
 function onPinClick(pin: RenderedPin) {
@@ -72,6 +95,12 @@ const currentFunction = computed(() => {
   if (!selectedPin.value) return undefined
   return chipStore.getPinConfiguration(selectedPin.value.name)
 })
+
+const isSelectedPinFixed = computed(() => {
+  if (!selectedPin.value || !chipStore.currentChip) return false
+  const pinCap = chipStore.currentChip.pins[selectedPin.value.name]
+  return !!pinCap?.fixed
+})
 </script>
 
 <template>
@@ -82,7 +111,16 @@ const currentFunction = computed(() => {
         <h1>PinMuxLab</h1>
       </div>
       <div v-if="chipStore.isLoaded" class="chip-info">
-        <span>{{ chipStore.currentChip?.meta.vendor }}</span>
+        <select 
+          class="chip-select" 
+          :value="chipStore.currentChip?.meta.name"
+          @change="onChipSelect"
+        >
+          <option v-for="chip in chipList" :key="chip.meta.name" :value="chip.meta.name">
+            {{ chip.meta.vendor }} {{ chip.meta.name }} ({{ chip.meta.package }})
+          </option>
+        </select>
+
         <a 
           v-if="chipStore.currentChip?.meta.datasheet"
           :href="chipStore.currentChip?.meta.datasheet" 
@@ -90,13 +128,13 @@ const currentFunction = computed(() => {
           class="chip-name-link"
           title="View Datasheet"
         >
-          {{ chipStore.currentChip?.meta.name }}
-          <span class="icon">📄</span>
+          <span class="icon">📄</span> Datasheet
         </a>
-        <span v-else>{{ chipStore.currentChip?.meta.name }}</span>
-        <span>{{ chipStore.currentChip?.meta.package }}</span>
       </div>
       <div class="actions">
+        <button class="btn-secondary" @click="onClearConfig" :disabled="!chipStore.isLoaded || Object.keys(chipStore.pinConfigurations).length === 0" title="Clear all configurations">
+          Clear
+        </button>
         <button class="btn-primary" @click="onExportCSV" :disabled="!chipStore.isLoaded">
           Export CSV
         </button>
@@ -107,9 +145,11 @@ const currentFunction = computed(() => {
       <div class="visualization-area">
         <ChipPackage 
           v-if="chipStore.isLoaded"
+          :key="chipStore.currentChip?.meta.name"
           :package-info="chipStore.currentChip!.package"
           :chip-meta="chipStore.currentChip!.meta"
           :pin-configurations="chipStore.pinConfigurations"
+          :pin-capabilities="chipStore.currentChip?.pins"
           @pin-click="onPinClick"
           @pin-contextmenu="handlePinContextMenu"
         />
@@ -124,25 +164,67 @@ const currentFunction = computed(() => {
           </div>
           <p class="pin-meta">Physical Pin: #{{ selectedPin.number }}</p>
           
-          <h3>Function Selection</h3>
-          <div class="function-list">
-            <div 
-              v-for="func in selectedPinFunctions" 
-              :key="func"
-              class="function-item"
-              :class="{ 'is-selected': currentFunction === func }"
-              @click="onFunctionSelect(func)"
-            >
-              <span class="radio-indicator"></span>
-              <span class="func-name">{{ func }}</span>
-            </div>
-            <div v-if="selectedPinFunctions.length === 0" class="no-functions">
-              No configurable functions
+          <div v-if="isSelectedPinFixed">
+             <h3>Fixed Function</h3>
+             <div class="fixed-function-display">
+                <span class="badge fixed">{{ selectedPinFunctions[0] || 'Unknown' }}</span>
+                <p class="hint">This pin has a fixed function and cannot be remapped.</p>
+             </div>
+          </div>
+          <div v-else>
+            <h3>Function Selection</h3>
+            <div class="function-list">
+              <div 
+                v-for="func in selectedPinFunctions" 
+                :key="func"
+                class="function-item"
+                :class="{ 'is-selected': currentFunction === func }"
+                @click="onFunctionSelect(func)"
+              >
+                <span class="radio-indicator"></span>
+                <span class="func-name">{{ func }}</span>
+              </div>
+              <div v-if="selectedPinFunctions.length === 0" class="no-functions">
+                No configurable functions
+              </div>
             </div>
           </div>
         </div>
-        <div v-else class="placeholder">
-          Click a pin to view details
+        <div v-else class="chip-details-sidebar">
+          <div v-if="chipStore.currentChip" class="chip-meta-info">
+             <h2>Chip Information</h2>
+             <div class="meta-group">
+                <div class="meta-item">
+                   <span class="label">Name</span>
+                   <span class="value highlight">{{ chipStore.currentChip.meta.name }}</span>
+                </div>
+                <div class="meta-item">
+                   <span class="label">Vendor</span>
+                   <span class="value">{{ chipStore.currentChip.meta.vendor }}</span>
+                </div>
+                <div class="meta-item">
+                   <span class="label">Family</span>
+                   <span class="value">{{ chipStore.currentChip.meta.family }}</span>
+                </div>
+                <div class="meta-item">
+                   <span class="label">Core</span>
+                   <span class="value">{{ chipStore.currentChip.meta.core }}</span>
+                </div>
+                <div class="meta-item">
+                   <span class="label">Package</span>
+                   <span class="value">{{ chipStore.currentChip.meta.package }}</span>
+                </div>
+             </div>
+             
+             <div class="datasheet-section" v-if="chipStore.currentChip.meta.datasheet">
+                <a :href="chipStore.currentChip.meta.datasheet" target="_blank" class="datasheet-btn">
+                  <span class="icon">📄</span> View Datasheet
+                </a>
+             </div>
+          </div>
+          <div v-else class="placeholder">
+            Loading chip data...
+          </div>
         </div>
       </aside>
 
@@ -207,6 +289,7 @@ header {
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-right: 20px;
 }
 
 .logo {
@@ -223,22 +306,36 @@ header {
 .chip-info {
   display: flex;
   align-items: center;
+  gap: 15px;
 }
 
-.chip-info span {
-  margin-left: 1rem;
-  font-weight: bold;
-  color: #666;
+.chip-select {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid #dcdfe6;
+  background-color: white;
+  font-size: 14px;
+  color: #606266;
+  outline: none;
+  cursor: pointer;
+  min-width: 200px;
+}
+
+.chip-select:hover {
+  border-color: #c0c4cc;
+}
+
+.chip-select:focus {
+  border-color: #42b883;
 }
 
 .chip-name-link {
-  margin-left: 1rem;
-  font-weight: bold;
   color: #42b883;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  font-size: 14px;
 }
 
 .chip-name-link:hover {
@@ -272,6 +369,28 @@ header {
 
 .btn-primary:disabled {
   background-color: #a8dcc5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  margin-right: 10px;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.btn-secondary:disabled {
+  background-color: #e2e6ea;
+  color: #aeb5bc;
   cursor: not-allowed;
 }
 
@@ -328,6 +447,29 @@ main {
   border-radius: 4px;
   font-size: 0.8rem;
   font-weight: normal;
+}
+
+.badge.fixed {
+  background-color: #e9ecef;
+  color: #495057;
+  font-size: 1rem;
+  padding: 4px 12px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.fixed-function-display {
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #6c757d;
+  font-style: italic;
 }
 
 .pin-meta {
@@ -460,5 +602,77 @@ main {
 
 .context-menu .menu-item.danger:hover {
   background-color: #fff5f5;
+}
+
+.chip-meta-info {
+  /* padding: 1rem; */ /* Sidebar already has padding */
+}
+
+.chip-meta-info h2 {
+  font-size: 1.2rem;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #333;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 0.5rem;
+}
+
+.meta-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.meta-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f9f9f9;
+  padding-bottom: 8px;
+}
+
+.meta-item .label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.meta-item .value {
+  font-weight: 500;
+  color: #333;
+}
+
+.meta-item .value.highlight {
+  color: #42b883;
+  font-weight: bold;
+}
+
+.datasheet-section {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.datasheet-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  border: 1px solid #dcdfe6;
+  border-radius: 6px;
+  color: #606266;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.datasheet-btn:hover {
+  border-color: #42b883;
+  color: #42b883;
+  background-color: #e6f4ea;
+}
+
+.datasheet-btn .icon {
+  font-size: 1.1rem;
 }
 </style>
