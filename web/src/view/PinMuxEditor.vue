@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import { useChipStore } from '@/stores/chipStore'
 import ChipPackage from '@/components/ChipPackage.vue'
+import IconSun from '@/components/icons/IconSun.vue'
+import IconMoon from '@/components/icons/IconMoon.vue'
 import type { RenderedPin } from '@/utils/packageLayout'
 import { exportConfigurationToCSV } from '@/utils/exportUtils'
 
@@ -55,9 +57,59 @@ const contextMenuY = ref(0)
 const contextMenuPin = ref<RenderedPin | null>(null)
 const contextMenuFunctions = ref<string[]>([])
 
+// Dark Mode
+const isDarkMode = ref(false)
+
+function toggleDarkMode() {
+  isDarkMode.value = !isDarkMode.value
+  updateTheme()
+}
+
+function updateTheme() {
+  if (isDarkMode.value) {
+    document.body.classList.add('dark-mode')
+    localStorage.setItem('theme', 'dark')
+  } else {
+    document.body.classList.remove('dark-mode')
+    localStorage.setItem('theme', 'light')
+  }
+}
+
 onMounted(() => {
-  // 默认加载第一个可用的芯片
-  if (vendorOptions.value.length > 0) {
+  // Initialize Theme
+  const savedTheme = localStorage.getItem('theme')
+  if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    isDarkMode.value = true
+  }
+  updateTheme()
+
+  // 尝试恢复上次选择的芯片
+  const lastSelection = localStorage.getItem('pinmux_last_selection')
+  let loaded = false
+
+  if (lastSelection) {
+    try {
+      const { vendor, family, chipName } = JSON.parse(lastSelection)
+      // 验证数据有效性
+      if (vendor && family && chipName && menuStructure.value[vendor]?.[family]) {
+        const chips = menuStructure.value[vendor][family]
+        const chip = chips.find((c: any) => c.meta.name === chipName)
+        
+        if (chip) {
+          console.log('Restoring Last Chip...', chip)
+          selectedVendor.value = vendor
+          selectedFamily.value = family
+          chipStore.loadChip(chip)
+          loaded = true
+        }
+      }
+    } catch (e) {
+      console.error('Failed to restore last selection', e)
+    }
+  }
+
+  // 如果没有恢复成功，则加载默认第一个可用的芯片
+  if (!loaded && vendorOptions.value.length > 0) {
     selectedVendor.value = vendorOptions.value[0] || ''
     
     const families = familyOptions.value
@@ -76,6 +128,25 @@ onMounted(() => {
   window.addEventListener('click', () => {
     showContextMenu.value = false
   })
+})
+
+// 监听当前芯片变化，保存到 localStorage
+watch(() => chipStore.currentChip, (newChip) => {
+  if (newChip) {
+    localStorage.setItem('pinmux_last_selection', JSON.stringify({
+      vendor: newChip.meta.vendor,
+      family: newChip.meta.family,
+      chipName: newChip.meta.name
+    }))
+    
+    // 同步更新下拉框选中状态 (以防芯片是从非下拉框途径加载的)
+    if (selectedVendor.value !== newChip.meta.vendor) {
+      selectedVendor.value = newChip.meta.vendor
+    }
+    if (selectedFamily.value !== newChip.meta.family) {
+      selectedFamily.value = newChip.meta.family
+    }
+  }
 })
 
 function onVendorChange() {
@@ -217,6 +288,12 @@ const isSelectedPinFixed = computed(() => {
         </a>
       </div>
       <div class="actions">
+        <button class="btn-icon" @click="toggleDarkMode" :title="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+          <!-- Sun Icon (for Dark Mode -> Switch to Light) -->
+          <IconSun v-if="isDarkMode" />
+          <!-- Moon Icon (for Light Mode -> Switch to Dark) -->
+          <IconMoon v-else />
+        </button>
         <button class="btn-secondary" @click="onClearConfig" :disabled="!chipStore.isLoaded || Object.keys(chipStore.pinConfigurations).length === 0" title="Clear all configurations">
           Clear
         </button>
@@ -363,8 +440,8 @@ const isSelectedPinFixed = computed(() => {
 
 header {
   padding: 0.5rem 1rem;
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -385,7 +462,7 @@ header {
 .brand h1 {
   margin: 0;
   font-size: 1.2rem;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .chip-info {
@@ -397,25 +474,25 @@ header {
 .chip-select {
   padding: 6px 12px;
   border-radius: 4px;
-  border: 1px solid #dcdfe6;
-  background-color: white;
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
   font-size: 14px;
-  color: #606266;
+  color: var(--text-secondary);
   outline: none;
   cursor: pointer;
   min-width: 120px;
 }
 
 .chip-select:hover {
-  border-color: #c0c4cc;
+  border-color: var(--input-hover);
 }
 
 .chip-select:focus {
-  border-color: #42b883;
+  border-color: var(--primary-color);
 }
 
 .chip-name-link {
-  color: #42b883;
+  color: var(--primary-color);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -425,7 +502,7 @@ header {
 
 .chip-name-link:hover {
   text-decoration: underline;
-  color: #33a06f;
+  color: var(--primary-hover);
 }
 
 .chip-name-link .icon {
@@ -435,10 +512,12 @@ header {
 .actions {
   margin-left: auto;
   padding-left: 20px;
+  display: flex;
+  align-items: center;
 }
 
 .btn-primary {
-  background-color: #42b883;
+  background-color: var(--primary-color);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -449,16 +528,16 @@ header {
 }
 
 .btn-primary:hover {
-  background-color: #33a06f;
+  background-color: var(--primary-hover);
 }
 
 .btn-primary:disabled {
-  background-color: #a8dcc5;
+  background-color: var(--primary-disabled);
   cursor: not-allowed;
 }
 
 .btn-secondary {
-  background-color: #6c757d;
+  background-color: var(--secondary-btn-bg);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -470,13 +549,32 @@ header {
 }
 
 .btn-secondary:hover {
-  background-color: #5a6268;
+  background-color: var(--secondary-btn-hover);
 }
 
 .btn-secondary:disabled {
-  background-color: #e2e6ea;
-  color: #aeb5bc;
+  background-color: var(--secondary-btn-disabled);
+  color: var(--secondary-btn-text-disabled);
   cursor: not-allowed;
+}
+
+.btn-icon {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  margin-right: 10px;
+}
+
+.btn-icon:hover {
+  background-color: var(--hover-bg);
+  color: var(--text-primary);
 }
 
 main {
@@ -487,7 +585,7 @@ main {
 
 .visualization-area {
   flex: 1;
-  background-color: #fff;
+  background-color: var(--bg-primary);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -496,13 +594,13 @@ main {
 }
 
 .loading {
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .sidebar {
   width: 300px;
-  background-color: #f8f9fa;
-  border-left: 1px solid #dee2e6;
+  background-color: var(--bg-secondary);
+  border-left: 1px solid var(--border-color);
   padding: 1rem;
   overflow-y: auto;
   flex-shrink: 0;
@@ -522,12 +620,12 @@ main {
 
 .pin-header h2 {
   margin: 0;
-  color: #2c3e50;
+  color: var(--text-primary);
 }
 
 .badge {
-  background-color: #e9ecef;
-  color: #495057;
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 0.8rem;
@@ -535,8 +633,8 @@ main {
 }
 
 .badge.fixed {
-  background-color: #e9ecef;
-  color: #495057;
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
   font-size: 1rem;
   padding: 4px 12px;
   display: inline-block;
@@ -545,20 +643,20 @@ main {
 
 .fixed-function-display {
   padding: 10px;
-  background-color: #f8f9fa;
+  background-color: var(--bg-secondary);
   border-radius: 4px;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--border-color);
 }
 
 .hint {
   margin: 0;
   font-size: 0.9rem;
-  color: #6c757d;
+  color: var(--text-secondary);
   font-style: italic;
 }
 
 .pin-meta {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   margin: 0 0 1.5rem 0;
 }
@@ -573,29 +671,30 @@ main {
   display: flex;
   align-items: center;
   padding: 8px 12px;
-  background-color: white;
-  border: 1px solid #dee2e6;
+  background-color: var(--input-bg);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
+  color: var(--text-primary);
 }
 
 .function-item:hover {
-  background-color: #e9ecef;
-  border-color: #adb5bd;
+  background-color: var(--hover-bg);
+  border-color: var(--input-hover);
 }
 
 .function-item.is-selected {
-  background-color: #e6f4ea; /* Vue Green Tint */
-  border-color: #42b883;
-  color: #2c3e50;
+  background-color: var(--active-bg);
+  border-color: var(--primary-color);
+  color: var(--text-primary);
   font-weight: bold;
 }
 
 .radio-indicator {
   width: 16px;
   height: 16px;
-  border: 2px solid #adb5bd;
+  border: 2px solid var(--input-hover);
   border-radius: 50%;
   margin-right: 10px;
   position: relative;
@@ -603,19 +702,19 @@ main {
 }
 
 .function-item.is-selected .radio-indicator {
-  border-color: #42b883;
-  background-color: #42b883;
+  border-color: var(--primary-color);
+  background-color: var(--primary-color);
   box-shadow: inset 0 0 0 3px #fff;
 }
 
 .no-functions {
-  color: #999;
+  color: var(--text-secondary);
   font-style: italic;
   font-size: 0.9rem;
 }
 
 .placeholder {
-  color: #999;
+  color: var(--text-secondary);
   text-align: center;
   margin-top: 2rem;
 }
@@ -624,8 +723,8 @@ main {
 .context-menu {
   position: fixed;
   z-index: 1000;
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   min-width: 150px;
@@ -635,10 +734,10 @@ main {
 
 .context-menu .menu-header {
   padding: 8px 12px;
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #eee;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
   font-weight: bold;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 12px;
 }
 
@@ -651,22 +750,22 @@ main {
 .context-menu .menu-item {
   padding: 8px 12px;
   cursor: pointer;
-  color: #333;
+  color: var(--text-primary);
   transition: background-color 0.1s;
 }
 
 .context-menu .menu-item:hover {
-  background-color: #f0f0f0;
+  background-color: var(--hover-bg);
 }
 
 .context-menu .menu-item.is-active {
-  background-color: #e6f4ea;
-  color: #42b883;
+  background-color: var(--active-bg);
+  color: var(--primary-color);
   font-weight: bold;
 }
 
 .context-menu .menu-item.disabled {
-  color: #999;
+  color: var(--text-secondary);
   cursor: default;
   font-style: italic;
 }
@@ -677,16 +776,16 @@ main {
 
 .context-menu .menu-separator {
   height: 1px;
-  background-color: #eee;
+  background-color: var(--border-color);
   margin: 4px 0;
 }
 
 .context-menu .menu-item.danger {
-  color: #dc3545;
+  color: var(--danger-color);
 }
 
 .context-menu .menu-item.danger:hover {
-  background-color: #fff5f5;
+  background-color: var(--danger-bg-hover);
 }
 
 .chip-meta-info {
@@ -697,8 +796,8 @@ main {
   font-size: 1.2rem;
   margin-top: 0;
   margin-bottom: 1.5rem;
-  color: #333;
-  border-bottom: 2px solid #f0f0f0;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--border-color);
   padding-bottom: 0.5rem;
 }
 
@@ -712,22 +811,22 @@ main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #f9f9f9;
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 8px;
 }
 
 .meta-item .label {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
 .meta-item .value {
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .meta-item .value.highlight {
-  color: #42b883;
+  color: var(--primary-color);
   font-weight: bold;
 }
 
@@ -742,19 +841,19 @@ main {
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background-color: #f8f9fa;
-  border: 1px solid #dcdfe6;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
-  color: #606266;
+  color: var(--text-secondary);
   text-decoration: none;
   font-size: 0.95rem;
   transition: all 0.2s;
 }
 
 .datasheet-btn:hover {
-  border-color: #42b883;
-  color: #42b883;
-  background-color: #e6f4ea;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background-color: var(--active-bg);
 }
 
 .datasheet-btn .icon {

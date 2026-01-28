@@ -221,7 +221,7 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
   justify-content: center;
   align-items: center;
   overflow: hidden; /* 防止 SVG 拖拽出边界 */
-  background-color: #f0f0f0; /* 给背景加个淡色以便区分 */
+  background-color: var(--chip-viz-bg); /* 给背景加个淡色以便区分 */
   cursor: grab; /* 提示可拖拽 */
   position: relative; /* 为绝对定位的控件提供锚点 */
 }
@@ -233,7 +233,7 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: white;
+  background: var(--zoom-control-bg);
   padding: 8px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
@@ -242,21 +242,21 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
 .zoom-controls button {
   width: 32px;
   height: 32px;
-  border: 1px solid #ddd;
-  background: white;
+  border: 1px solid var(--zoom-control-border);
+  background: var(--zoom-control-bg);
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #555;
+  color: var(--zoom-control-text);
   transition: all 0.2s;
 }
 
 .zoom-controls button:hover {
-  background: #f0f0f0;
-  color: #333;
+  background: var(--zoom-control-hover);
+  color: var(--text-primary);
 }
 
 .chip-package-container:active {
