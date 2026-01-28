@@ -312,49 +312,59 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
   opacity: 0.8;
 }
 
+/* Default Pin Style */
 .pin-shape {
-  fill: #b0b0b0; /* 金属银色 */
+  fill: var(--pin-default);
   stroke: #666;
   stroke-width: 1;
-  transition: fill 0.3s;
+  transition: all 0.2s;
+  cursor: pointer;
 }
 
 .pin-shape.is-configured {
-  fill: #42b883; /* 配置后变为绿色 */
-  stroke: #2c3e50;
+  fill: var(--pin-selected);
+  stroke: #2e8b57;
+  stroke-width: 2;
 }
 
 /* Special Pin Types */
 .pin-shape.pin-type-power {
-  fill: #ff7875; /* Red */
+  fill: var(--pin-power);
 }
 .pin-shape.pin-type-gnd {
-  fill: #595959; /* Dark Gray */
-  stroke: #262626;
+  fill: var(--pin-gnd);
 }
 .pin-shape.pin-type-reset {
-  fill: #faad14; /* Orange/Yellow */
+  fill: var(--pin-reset);
 }
 .pin-shape.pin-type-boot {
-  fill: #b37feb; /* Purple */
+  fill: var(--pin-boot);
 }
 
+/* Hover Effects */
 .pin-group:hover .pin-shape {
-  fill: #e6f7ff;
+  fill: var(--pin-hover);
 }
 
 /* Hover states for special pins */
 .pin-group:hover .pin-shape.pin-type-power {
-  fill: #ff9c6e;
+  fill: var(--pin-power-hover);
 }
 .pin-group:hover .pin-shape.pin-type-gnd {
-  fill: #8c8c8c;
+  fill: var(--pin-gnd-hover);
 }
 .pin-group:hover .pin-shape.pin-type-reset {
-  fill: #ffc53d;
+  fill: var(--pin-reset-hover);
 }
 .pin-group:hover .pin-shape.pin-type-boot {
-  fill: #d3adf7;
+  fill: var(--pin-boot-hover);
+}
+
+.chip-svg text {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .pin-label {

@@ -1,0 +1,39 @@
+:root {
+  /* Default / Light Mode Pin Colors */
+  --pin-default: #e0e0e0;
+  --pin-selected: #42b883;
+  --pin-assigned: #409eff;
+  --pin-hover: #b3e19d;
+  
+  /* Special Function Pins */
+  --pin-power: #ff4d4f; /* Red */
+  --pin-gnd: #ff4d4f;   /* Red (Same as Power) */
+  --pin-reset: #faad14; /* Orange/Yellow */
+  --pin-boot: #722ed1;  /* Purple */
+  
+  /* Hover States for Special Pins (Lighter versions) */
+  --pin-power-hover: #ff7875;
+  --pin-gnd-hover: #ff7875;
+  --pin-reset-hover: #ffc53d;
+  --pin-boot-hover: #9254de;
+}
+
+.dark-mode {
+  /* Dark Mode Pin Colors */
+  --pin-default: #4a4a4a;
+  --pin-selected: #42b883;
+  --pin-assigned: #409eff;
+  --pin-hover: #2d5242;
+  
+  /* Special Function Pins - Dark Mode */
+  --pin-power: #d32029; /* Darker Red */
+  --pin-gnd: #d32029;   /* Darker Red */
+  --pin-reset: #d48806; /* Darker Orange */
+  --pin-boot: #531dab;  /* Darker Purple */
+  
+  /* Hover States - Dark Mode */
+  --pin-power-hover: #a8071a;
+  --pin-gnd-hover: #a8071a;
+  --pin-reset-hover: #ad6800;
+  --pin-boot-hover: #391085;
+}

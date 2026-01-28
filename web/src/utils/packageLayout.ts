@@ -54,7 +54,7 @@ export function calculateQuadLayout(pkg: PackageInfo): PackageLayout {
   const { pinCount, pins } = pkg
   
   // 配置参数 (单位：无量纲 SVG 坐标)
-  const PIN_WIDTH = 60 // 30 -> 40 -> 48
+  const PIN_WIDTH = 54 // 30 -> 40 -> 48
   const PIN_HEIGHT = 36 // 10 -> 15 -> 24
   const PIN_SPACING = 28 // 15 -> 20 -> 28
   const BODY_PADDING = 30 // 20 -> 30
