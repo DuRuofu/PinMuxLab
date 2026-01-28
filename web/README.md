@@ -1,48 +1,62 @@
-# PinMuxLab
+# PinMuxLab Web Client
 
-This template should help get you started developing with Vue 3 in Vite.
+PinMuxLab 的前端可视化界面，基于 Vue 3 + TypeScript + Vite 构建。
 
-## Recommended IDE Setup
+## 技术栈
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **框架**: Vue 3 (Composition API)
+- **语言**: TypeScript
+- **状态管理**: Pinia
+- **构建工具**: Vite
+- **样式**: CSS (Scoped)
 
-## Recommended Browser Setup
+## 项目结构
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+```
+web/
+├── src/
+│   ├── assets/          # 静态资源 (含示例芯片 JSON)
+│   ├── components/      # Vue 组件
+│   │   └── ChipPackage.vue  # 核心：芯片封装可视化组件 (SVG)
+│   ├── stores/          # Pinia 状态管理
+│   │   └── chipStore.ts     # 芯片数据管理 Store
+│   ├── types/           # TypeScript 类型定义
+│   │   └── chip.ts          # 芯片 JSON 数据结构定义
+│   ├── utils/           # 工具函数
+│   │   └── packageLayout.ts # 封装布局计算算法 (核心几何逻辑)
+│   ├── App.vue          # 主应用入口
+│   └── main.ts          # 程序入口
+├── index.html           # HTML 模板
+└── package.json         # 依赖配置
+```
 
-## Type Support for `.vue` Imports in TS
+## 开发与运行
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+本项目使用 `pnpm` 作为包管理器。
 
-## Customize configuration
+### 1. 安装依赖
 
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
+```bash
 pnpm install
 ```
 
-### Compile and Hot-Reload for Development
+### 2. 启动开发服务器
 
-```sh
+```bash
 pnpm dev
 ```
 
-### Type-Check, Compile and Minify for Production
+启动后访问终端显示的本地地址（通常是 `http://localhost:5173`）。
 
-```sh
+### 3. 构建生产版本
+
+```bash
 pnpm build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+## 功能说明
 
-```sh
-pnpm lint
-```
+目前处于 v0.1 原型阶段，主要功能包括：
+1. **自动加载芯片数据**：启动时自动读取 `src/assets` 下的 JSON 示例。
+2. **SVG 动态渲染**：根据 JSON 中的封装信息，自动计算并绘制 QFN/LQFP 封装图。
+3. **交互查询**：点击芯片引脚，右侧边栏显示该引脚的详细功能定义。

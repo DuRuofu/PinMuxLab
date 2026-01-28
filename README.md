@@ -12,7 +12,7 @@ An open-source MCU pin & peripheral allocation visualizer
 
 ```txt
 ┌─────────────┐
-│ 芯片描述数据 │  ← JSON / YAML
+│ 芯片描述数据 │  ← JSON
 └─────┬───────┘
       │
 ┌─────▼────────────────────┐
@@ -24,7 +24,7 @@ An open-source MCU pin & peripheral allocation visualizer
 └─────┬───────────┘
       │
 ┌─────▼────────────────────┐
-│  可视化层 (SVG / Canvas) │
+│  可视化层 (SVG) │
 └──────────────────────────┘
 
 ```
