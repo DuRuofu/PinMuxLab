@@ -11,6 +11,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'pin-click', pin: RenderedPin): void
+  (e: 'pin-contextmenu', pin: RenderedPin, event: MouseEvent): void
 }>()
 
 // 判断引脚是否已配置
@@ -81,6 +82,10 @@ const layout = computed(() => {
 function handlePinClick(pin: RenderedPin) {
   emit('pin-click', pin)
 }
+
+function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
+  emit('pin-contextmenu', pin, event)
+}
 </script>
 
 <template>
@@ -132,7 +137,13 @@ function handlePinClick(pin: RenderedPin) {
       </g>
 
       <!-- 引脚 -->
-      <g v-for="pin in layout.pins" :key="pin.number" class="pin-group" @click.stop="handlePinClick(pin)">
+      <g 
+        v-for="pin in layout.pins" 
+        :key="pin.number" 
+        class="pin-group" 
+        @click.stop="handlePinClick(pin)"
+        @contextmenu.prevent.stop="handlePinRightClick(pin, $event)"
+      >
         <!-- 引脚形状 -->
         <rect
           :x="pin.x"
