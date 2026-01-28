@@ -1,0 +1,251 @@
+{
+  "meta": {
+    "vendor": "WCH",
+    "family": "CH32V003",
+    "name": "CH32V003F4U6",
+    "core": "RISC-V",
+    "package": "QFN20",
+    "datasheet": "CH32V003_DS.pdf"
+  },
+
+  "package": {
+    "type": "QFN20",
+    "pinCount": 20,
+    "pins": [
+      { "number": 1, "name": "PA1" },
+      { "number": 2, "name": "PA2" },
+      { "number": 3, "name": "PA3" },
+      { "number": 4, "name": "PA4" },
+      { "number": 5, "name": "VSS" },
+      { "number": 6, "name": "VDD" },
+      { "number": 7, "name": "PB0" },
+      { "number": 8, "name": "PB1" },
+      { "number": 9, "name": "PB2" },
+      { "number": 10, "name": "PB3" },
+      { "number": 11, "name": "PB4" },
+      { "number": 12, "name": "PB5" },
+      { "number": 13, "name": "PC0" },
+      { "number": 14, "name": "PC1" },
+      { "number": 15, "name": "PC2" },
+      { "number": 16, "name": "PC3" },
+      { "number": 17, "name": "PC4" },
+      { "number": 18, "name": "PC5" },
+      { "number": 19, "name": "NRST" },
+      { "number": 20, "name": "BOOT0" }
+    ]
+  },
+
+  "pins": {
+    "VDD": {
+      "type": "power",
+      "fixed": true,
+      "functions": ["VDD"]
+    },
+
+    "VSS": {
+      "type": "gnd",
+      "fixed": true,
+      "functions": ["GND"]
+    },
+
+    "NRST": {
+      "type": "reset",
+      "fixed": true,
+      "functions": ["NRST"]
+    },
+
+    "BOOT0": {
+      "type": "boot",
+      "fixed": true,
+      "functions": ["BOOT0"]
+    },
+
+    "PA1": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN1",
+        "TIM1_CH1"
+      ]
+    },
+
+    "PA2": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "USART1_TX",
+        "ADC_IN2"
+      ]
+    },
+
+    "PA3": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "USART1_RX",
+        "ADC_IN3"
+      ]
+    },
+
+    "PA4": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN4",
+        "TIM1_CH2"
+      ]
+    },
+
+    "PB0": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN8",
+        "TIM1_CH3"
+      ]
+    },
+
+    "PB1": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN9",
+        "TIM1_CH4"
+      ]
+    },
+
+    "PB2": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO"
+      ]
+    },
+
+    "PB3": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "SPI1_SCK"
+      ]
+    },
+
+    "PB4": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "SPI1_MISO"
+      ]
+    },
+
+    "PB5": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "SPI1_MOSI"
+      ]
+    },
+
+    "PC0": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN10"
+      ]
+    },
+
+    "PC1": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN11"
+      ]
+    },
+
+    "PC2": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO"
+      ]
+    },
+
+    "PC3": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO"
+      ]
+    },
+
+    "PC4": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO"
+      ]
+    },
+
+    "PC5": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO"
+      ]
+    }
+  },
+
+  "peripherals": {
+    "USART1": {
+      "type": "uart",
+      "signals": {
+        "TX": ["PA2"],
+        "RX": ["PA3"]
+      }
+    },
+
+    "SPI1": {
+      "type": "spi",
+      "signals": {
+        "SCK": ["PB3"],
+        "MISO": ["PB4"],
+        "MOSI": ["PB5"]
+      }
+    },
+
+    "ADC1": {
+      "type": "adc",
+      "signals": {
+        "IN1": ["PA1"],
+        "IN2": ["PA2"],
+        "IN3": ["PA3"],
+        "IN4": ["PA4"],
+        "IN8": ["PB0"],
+        "IN9": ["PB1"],
+        "IN10": ["PC0"],
+        "IN11": ["PC1"]
+      }
+    },
+
+    "TIM1": {
+      "type": "timer",
+      "signals": {
+        "CH1": ["PA1"],
+        "CH2": ["PA4"],
+        "CH3": ["PB0"],
+        "CH4": ["PB1"]
+      }
+    }
+  }
+}
