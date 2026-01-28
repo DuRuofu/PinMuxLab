@@ -5,9 +5,44 @@ import ChipPackage from '@/components/ChipPackage.vue'
 import type { RenderedPin } from '@/utils/packageLayout'
 import { exportConfigurationToCSV } from '@/utils/exportUtils'
 
-// 导入芯片数据 (Vite Glob Import)
-const chipModules = import.meta.glob('@/assets/*.json', { eager: true })
-const chipList = Object.values(chipModules).map((mod: any) => mod.default || mod)
+// 导入芯片数据 (Vite Glob Import) - Load from nested structure
+const chipModules = import.meta.glob('@/assets/chips/**/*.json', { eager: true })
+const allChips = Object.values(chipModules).map((mod: any) => mod.default || mod)
+
+// Group chips by Vendor -> Family
+const menuStructure = computed(() => {
+  const struct: Record<string, Record<string, any[]>> = {}
+  
+  for (const chip of allChips) {
+    const vendor = chip.meta.vendor || 'Unknown'
+    const family = chip.meta.family || 'Unknown'
+    
+    if (!struct[vendor]) struct[vendor] = {}
+    if (!struct[vendor][family]) struct[vendor][family] = []
+    
+    struct[vendor][family].push(chip)
+  }
+  return struct
+})
+
+const selectedVendor = ref('')
+const selectedFamily = ref('')
+
+const vendorOptions = computed(() => Object.keys(menuStructure.value).sort())
+
+const familyOptions = computed(() => {
+  const vendorData = menuStructure.value[selectedVendor.value]
+  if (!selectedVendor.value || !vendorData) return []
+  return Object.keys(vendorData).sort()
+})
+
+const chipOptions = computed(() => {
+  if (!selectedVendor.value || !selectedFamily.value) return []
+  const vendorData = menuStructure.value[selectedVendor.value]
+  if (!vendorData) return []
+  const chips = vendorData[selectedFamily.value] || []
+  return chips.sort((a: any, b: any) => a.meta.name.localeCompare(b.meta.name))
+})
 
 const chipStore = useChipStore()
 const selectedPin = ref<RenderedPin | null>(null)
@@ -21,10 +56,20 @@ const contextMenuPin = ref<RenderedPin | null>(null)
 const contextMenuFunctions = ref<string[]>([])
 
 onMounted(() => {
-  // 默认加载第一个芯片
-  if (chipList.length > 0) {
-    console.log('Loading Default Chip...', chipList[0])
-    chipStore.loadChip(chipList[0] as any)
+  // 默认加载第一个可用的芯片
+  if (vendorOptions.value.length > 0) {
+    selectedVendor.value = vendorOptions.value[0] || ''
+    
+    const families = familyOptions.value
+    if (families.length > 0) {
+      selectedFamily.value = families[0] || ''
+      
+      const chips = chipOptions.value
+      if (chips.length > 0) {
+        console.log('Loading Default Chip...', chips[0])
+        chipStore.loadChip(chips[0])
+      }
+    }
   }
   
   // Close context menu on global click
@@ -33,16 +78,41 @@ onMounted(() => {
   })
 })
 
+function onVendorChange() {
+  // When vendor changes, select first family and its first chip
+  const families = familyOptions.value
+  if (families.length > 0) {
+    selectedFamily.value = families[0] || ''
+    onFamilyChange()
+  } else {
+    selectedFamily.value = ''
+  }
+}
+
+function onFamilyChange() {
+  // When family changes, select first chip
+  const chips = chipOptions.value
+  if (chips.length > 0) {
+    chipStore.loadChip(chips[0])
+    resetSelection()
+  }
+}
+
 function onChipSelect(event: Event) {
   const select = event.target as HTMLSelectElement
   const chipName = select.value
-  const chipData = chipList.find(c => c.meta.name === chipName)
+  // Find chip in current vendor/family list
+  const chipData = chipOptions.value.find((c: any) => c.meta.name === chipName)
+  
   if (chipData) {
     chipStore.loadChip(chipData)
-    // 重置选中状态
-    selectedPin.value = null
-    selectedPinFunctions.value = []
+    resetSelection()
   }
+}
+
+function resetSelection() {
+  selectedPin.value = null
+  selectedPinFunctions.value = []
 }
 
 
@@ -111,13 +181,28 @@ const isSelectedPinFixed = computed(() => {
         <h1>PinMuxLab</h1>
       </div>
       <div v-if="chipStore.isLoaded" class="chip-info">
+        <!-- Vendor Select -->
+        <select class="chip-select vendor-select" v-model="selectedVendor" @change="onVendorChange">
+           <option v-for="vendor in vendorOptions" :key="vendor" :value="vendor">
+             {{ vendor }}
+           </option>
+        </select>
+
+        <!-- Family Select -->
+        <select class="chip-select family-select" v-model="selectedFamily" @change="onFamilyChange">
+           <option v-for="family in familyOptions" :key="family" :value="family">
+             {{ family }}
+           </option>
+        </select>
+
+        <!-- Chip Select -->
         <select 
           class="chip-select" 
           :value="chipStore.currentChip?.meta.name"
           @change="onChipSelect"
         >
-          <option v-for="chip in chipList" :key="chip.meta.name" :value="chip.meta.name">
-            {{ chip.meta.vendor }} {{ chip.meta.name }} ({{ chip.meta.package }})
+          <option v-for="chip in chipOptions" :key="chip.meta.name" :value="chip.meta.name">
+            {{ chip.meta.name }} ({{ chip.meta.package }})
           </option>
         </select>
 
@@ -318,7 +403,7 @@ header {
   color: #606266;
   outline: none;
   cursor: pointer;
-  min-width: 200px;
+  min-width: 120px;
 }
 
 .chip-select:hover {
