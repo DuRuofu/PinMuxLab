@@ -9,215 +9,258 @@
     "sram": "2K",
     "datasheet": "https://item.szlcsc.com/datasheet/CH32V003F4P6/5858783.html"
   },
-
   "package": {
     "type": "TSSOP20",
     "pinCount": 20,
     "pins": [
-      { "number": 1, "name": "PD4" },
-      { "number": 2, "name": "PD5" },
-      { "number": 3, "name": "PD6" },
-      { "number": 4, "name": "PD7" },
-      { "number": 5, "name": "PA1" },
-      { "number": 6, "name": "PA2" },
-      { "number": 7, "name": "VSS" },
-      { "number": 8, "name": "PD0" },
-      { "number": 9, "name": "VDD" },
-      { "number": 10, "name": "PC0" },
-      { "number": 11, "name": "PC1" },
-      { "number": 12, "name": "PC2" },
-      { "number": 13, "name": "PC4" },
-      { "number": 14, "name": "PC5" },
-      { "number": 15, "name": "PC6" },
-      { "number": 16, "name": "PC7" },
-      { "number": 17, "name": "PD1" },
-      { "number": 18, "name": "PD2" },
-      { "number": 19, "name": "PD3" },
-      { "number": 20, "name": "PC3" }
+      {
+        "number": 1,
+        "name": "PD4"
+      },
+      {
+        "number": 2,
+        "name": "PD5"
+      },
+      {
+        "number": 3,
+        "name": "PD6"
+      },
+      {
+        "number": 4,
+        "name": "PD7"
+      },
+      {
+        "number": 5,
+        "name": "PA1"
+      },
+      {
+        "number": 6,
+        "name": "PA2"
+      },
+      {
+        "number": 7,
+        "name": "VSS"
+      },
+      {
+        "number": 8,
+        "name": "PD0"
+      },
+      {
+        "number": 9,
+        "name": "VDD"
+      },
+      {
+        "number": 10,
+        "name": "PC0"
+      },
+      {
+        "number": 11,
+        "name": "PC1"
+      },
+      {
+        "number": 12,
+        "name": "PC2"
+      },
+      {
+        "number": 13,
+        "name": "PC4"
+      },
+      {
+        "number": 14,
+        "name": "PC5"
+      },
+      {
+        "number": 15,
+        "name": "PC6"
+      },
+      {
+        "number": 16,
+        "name": "PC7"
+      },
+      {
+        "number": 17,
+        "name": "PD1"
+      },
+      {
+        "number": 18,
+        "name": "PD2"
+      },
+      {
+        "number": 19,
+        "name": "PD3"
+      },
+      {
+        "number": 20,
+        "name": "PC3"
+      }
     ]
   },
-
-  "pins": {
-    "VDD": {
-      "type": "power",
-      "fixed": true,
-      "functions": ["VDD"]
-    },
-    "VSS": {
-      "type": "gnd",
-      "fixed": true,
-      "functions": ["GND"]
-    },
-    "NRST": {
-      "type": "reset",
-      "fixed": true,
-      "functions": ["NRST"]
-    },
-    "BOOT0": {
-      "type": "boot",
-      "fixed": true,
-      "functions": ["BOOT0"]
-    },
-    "PA1": {
-      "type": "gpio",
-      "fixed": false,
-      "functions": ["GPIO", "OSC_IN", "ADC_IN1", "TIM1_CH2", "COMP1_INP"]
-    },
-    "PA2": {
-      "type": "gpio",
-      "fixed": false,
-      "functions": ["GPIO", "OSC_OUT", "ADC_IN0", "TIM1_CH2N", "COMP1_INM", "TIM1_ETR2"]
-    },
-    "PC0": {
-      "type": "gpio",
-      "fixed": false,
-      "functions": ["GPIO", "TIM2_CH3", "UART1_TX", "SPI1_NSS", "TIM1_CH3"]
-    },
-    "PC1": {
-      "type": "gpio",
-      "fixed": false,
-      "functions": ["GPIO", "I2C1_SDA", "SPI1_NSS", "TIM2_CH4", "TIM1_BKIN", "UART1_RX"]
-    },
-    "PC2": {
-      "type": "gpio",
-      "fixed": false,
-      "functions": ["GPIO", "I2C1_SCL", "UART1_RTS", "TIM1_ETR", "TIM2_CH2"]
-    },
-    "PC3": {
-      "type": "gpio",
-      "fixed": false,
-      "functions": ["GPIO", "TIM1_CH3", "TIM1_CH1N", "UART1_CTS"]
-    },
-    "PC4": {
-      "type": "gpio",
-      "fixed": false,
-      "functions": ["GPIO", "ADC_IN2", "TIM1_CH4", "MCO", "TIM1_CH1N"]
-    },
-    "PC5": {
-      "type": "gpio",
-      "fixed": false,
-      "functions": ["GPIO", "SPI1_SCK", "TIM1_ETR", "TIM2_CH1", "I2C1_SCL", "TIM1_CH3"]
-    },
-    "PC6": {
-      "type": "gpio",
-      "fixed": false,
-      "functions": ["GPIO", "SPI1_MOSI", "TIM1_CH1", "UART1_CTS", "I2C1_SDA"]
-    },
-    "PC7": {
-      "type": "gpio",
-      "fixed": false,
-      "functions": ["GPIO", "SPI1_MISO", "TIM1_CH2", "TIM2_CH2", "UART1_RTS"]
-    },
-    "PD0": {
-      "type": "gpio",
-      "fixed": false,
-      "functions": ["GPIO", "TIM1_CH1N", "COMP1_INM", "I2C1_SDA", "UART1_TX"]
-    },
-    "PD1": {
-      "type": "gpio",
-      "fixed": false,
-      "functions": ["GPIO", "SWIO", "TIM1_ETR2", "TIM1_CH3N", "I2C1_SCL", "UART1_RX"]
-    },
-    "PD2": {
-      "type": "gpio",
-      "fixed": false,
-      "functions": ["GPIO", "ADC_IN3", "TIM1_CH1", "TIM2_CH3", "TIM1_CH2N"]
-    },
-    "PD3": {
-      "type": "gpio",
-      "fixed": false,
-      "functions": ["GPIO", "UART1_CTS", "TIM1_CH4"]
-    },
-    "PD4": {
-      "type": "gpio",
-      "fixed": false,
-      "functions": ["GPIO", "ADC_IN4", "TIM2_CH2", "TIM1_ETR", "COMP1_OUT"]
-    },
-    "PD5": {
-      "type": "gpio",
-      "fixed": false,
-      "functions": ["GPIO", "ADC_IN5", "UART1_TX", "TIM2_CH4", "UART1_RX"]
-    },
-    "PD6": {
-      "type": "gpio",
-      "fixed": false,
-      "functions": ["GPIO", "ADC_IN6", "UART1_RX", "TIM2_CH3", "UART1_TX"]
-    },
-    "PD7": {
-      "type": "gpio",
-      "fixed": false,
-      "functions": ["GPIO", "NRST", "TIM2_CH4", "COMP1_OUT", "TIM1_ETR"]
-    }
-  },
-
   "peripherals": {
-    "UART1": {
-      "type": "uart",
-      "signals": {
-        "TX": ["PD0", "PC0", "PD5", "PD6"],
-        "RX": ["PC1", "PD1", "PD5", "PD6"],
-        "CTS": ["PC3", "PD3"],
-        "RTS": ["PC2", "PC7"]
+    "UART/USART": {
+      "Description": "UART/USART Peripheral",
+      "UART1": {
+        "pinmaps": [
+          {
+            "TX": "PD0",
+            "RX": "PC1",
+            "CTS": "PC3",
+            "RTS": "PC2"
+          },
+          {
+            "TX": "PC0",
+            "RX": "PD1",
+            "CTS": "PD3",
+            "RTS": "PC7"
+          },
+          {
+            "TX": "PD5",
+            "RX": "PD5"
+          },
+          {
+            "TX": "PD6",
+            "RX": "PD6"
+          }
+        ]
       }
     },
-    "SPI1": {
-      "type": "spi",
-      "signals": {
-        "NSS": ["PC0", "PC1"],
-        "SCK": ["PC5"],
-        "MISO": ["PC7"],
-        "MOSI": ["PC6"]
+    "SPI": {
+      "Description": "SPI Peripheral",
+      "SPI1": {
+        "pinmaps": [
+          {
+            "NSS": "PC0",
+            "SCK": "PC5",
+            "MISO": "PC7",
+            "MOSI": "PC6"
+          },
+          {
+            "NSS": "PC1",
+            "SCK": "PC5",
+            "MISO": "PC7",
+            "MOSI": "PC6"
+          }
+        ]
       }
     },
-    "I2C1": {
-      "type": "i2c",
-      "signals": {
-        "SDA": ["PD0", "PC1", "PC6"],
-        "SCL": ["PC2", "PC5", "PD1"]
+    "I2C": {
+      "Description": "I2C Peripheral",
+      "I2C1": {
+        "pinmaps": [
+          {
+            "SDA": "PD0",
+            "SCL": "PC2"
+          },
+          {
+            "SDA": "PC1",
+            "SCL": "PC5"
+          },
+          {
+            "SDA": "PC6",
+            "SCL": "PD1"
+          }
+        ]
       }
     },
-    "ADC1": {
-      "type": "adc",
-      "signals": {
-        "IN0": ["PA2"],
-        "IN1": ["PA1"],
-        "IN2": ["PC4"],
-        "IN3": ["PD2"],
-        "IN4": ["PD4"],
-        "IN5": ["PD5"],
-        "IN6": ["PD6"]
+    "ADC": {
+      "Description": "ADC Peripheral",
+      "ADC1": {
+        "pinmaps": [
+          {
+            "IN0": "PA2",
+            "IN1": "PA1",
+            "IN2": "PC4",
+            "IN3": "PD2",
+            "IN4": "PD4",
+            "IN5": "PD5",
+            "IN6": "PD6"
+          }
+        ]
       }
     },
-    "TIM1": {
-      "type": "timer",
-      "signals": {
-        "CH1": ["PA1", "PC6", "PD2"],
-        "CH1N": ["PA2", "PC3", "PC4", "PD0"],
-        "CH2": ["PA1", "PC7"],
-        "CH2N": ["PA2", "PD2"],
-        "CH3": ["PC0", "PC5"],
-        "CH3N": ["PD1"],
-        "CH4": ["PC4", "PD3"],
-        "ETR": ["PC2", "PC5", "PD4", "PD7"],
-        "ETR2": ["PA2", "PD1"],
-        "BKIN": ["PC1"]
+    "ADTM": {
+      "Description": "ADTM Peripheral",
+      "TIM1": {
+        "pinmaps": [
+          {
+            "CH1": "PA1",
+            "CH1N": "PA2",
+            "CH2": "PA1",
+            "CH2N": "PA2",
+            "CH3": "PC0",
+            "CH3N": "PD1",
+            "CH4": "PC4",
+            "ETR": "PC2",
+            "ETR2": "PA2",
+            "BKIN": "PC1"
+          },
+          {
+            "CH1": "PC6",
+            "CH1N": "PC3",
+            "CH2": "PC7",
+            "CH2N": "PD2",
+            "CH3": "PC5",
+            "CH3N": "PD1",
+            "CH4": "PD3",
+            "ETR": "PC5",
+            "ETR2": "PD1",
+            "BKIN": "PC1"
+          },
+          {
+            "CH1": "PD2",
+            "CH1N": "PC4",
+            "CH3N": "PD1",
+            "ETR": "PD4",
+            "BKIN": "PC1"
+          },
+          {
+            "CH1N": "PD0",
+            "CH3N": "PD1",
+            "ETR": "PD7",
+            "BKIN": "PC1"
+          }
+        ]
       }
     },
-    "TIM2": {
-      "type": "timer",
-      "signals": {
-        "CH1": ["PC5"],
-        "CH2": ["PC2", "PC7", "PD4"],
-        "CH3": ["PC0", "PD2", "PD6"],
-        "CH4": ["PC1", "PD5", "PD7"]
+    "GPTM": {
+      "Description": "GPTM Peripheral",
+      "TIM2": {
+        "pinmaps": [
+          {
+            "CH1": "PC5",
+            "CH2": "PC2",
+            "CH3": "PC0",
+            "CH4": "PC1"
+          },
+          {
+            "CH1": "PC5",
+            "CH2": "PC7",
+            "CH3": "PD2",
+            "CH4": "PD5"
+          },
+          {
+            "CH1": "PC5",
+            "CH2": "PD4",
+            "CH3": "PD6",
+            "CH4": "PD7"
+          }
+        ]
       }
     },
-    "COMP1": {
-      "type": "comparator",
-      "signals": {
-        "INP": ["PA1"],
-        "INM": ["PA2", "PD0"],
-        "OUT": ["PD4", "PD7"]
+    "OPA": {
+      "Description": "OPA Peripheral",
+      "COMP1": {
+        "pinmaps": [
+          {
+            "INP": "PA1",
+            "INM": "PA2",
+            "OUT": "PD4"
+          },
+          {
+            "INP": "PA1",
+            "INM": "PD0",
+            "OUT": "PD7"
+          }
+        ]
       }
     }
   }

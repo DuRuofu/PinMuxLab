@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { ChipDefinition, PinCapability } from '@/types/chip'
+import { inferChipData } from '@/utils/chipInferencer'
 
 export const useChipStore = defineStore('chip', () => {
   // State
@@ -9,7 +10,8 @@ export const useChipStore = defineStore('chip', () => {
   const isLoaded = computed(() => !!currentChip.value)
 
   // Actions
-  function loadChip(data: ChipDefinition) {
+  function loadChip(rawData: any) {
+    const data = inferChipData(rawData)
     currentChip.value = data
     // 尝试从 localStorage 加载配置
     const storageKey = `pinmux_config_${data.meta.name}`
