@@ -133,8 +133,10 @@ export function inferChipData(raw: any): ChipDefinition {
   const sortedPinNames = Array.from(distinctPins).sort((a, b) => {
     const typeA = getPinType(a)
     const typeB = getPinType(b)
-    if (typeOrder[typeA] !== typeOrder[typeB]) {
-      return typeOrder[typeA] - typeOrder[typeB]
+    const orderA = typeOrder[typeA] ?? 99
+    const orderB = typeOrder[typeB] ?? 99
+    if (orderA !== orderB) {
+      return orderA - orderB
     }
     // Then alphanumeric sort
     return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })

@@ -13,6 +13,10 @@ export interface ChipMeta {
   core: string
   /** 封装名称，如 "QFN20" */
   package: string
+  /** Flash 大小，如 "32K" */
+  flash?: string
+  /** SRAM 大小，如 "10K" */
+  sram?: string
   /** 数据手册文件名或链接 */
   datasheet: string
 }

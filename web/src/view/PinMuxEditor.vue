@@ -376,6 +376,14 @@ const isSelectedPinFixed = computed(() => {
                    <span class="label">Package</span>
                    <span class="value">{{ chipStore.currentChip.meta.package }}</span>
                 </div>
+                <div class="meta-item" v-if="chipStore.currentChip.meta.flash">
+                   <span class="label">Flash</span>
+                   <span class="value">{{ chipStore.currentChip.meta.flash }}</span>
+                </div>
+                <div class="meta-item" v-if="chipStore.currentChip.meta.sram">
+                   <span class="label">SRAM</span>
+                   <span class="value">{{ chipStore.currentChip.meta.sram }}</span>
+                </div>
              </div>
              
              <div class="datasheet-section" v-if="chipStore.currentChip.meta.datasheet">
