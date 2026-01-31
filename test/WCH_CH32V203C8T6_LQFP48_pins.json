@@ -1,0 +1,551 @@
+{
+  "pins": {
+    "VBAT": {
+      "type": "power",
+      "fixed": true,
+      "functions": [
+        "VBAT"
+      ]
+    },
+    "VDD": {
+      "type": "power",
+      "fixed": true,
+      "functions": [
+        "VDD"
+      ]
+    },
+    "VDDA": {
+      "type": "power",
+      "fixed": true,
+      "functions": [
+        "VDDA"
+      ]
+    },
+    "VSS": {
+      "type": "gnd",
+      "fixed": true,
+      "functions": [
+        "GND"
+      ]
+    },
+    "VSSA": {
+      "type": "gnd",
+      "fixed": true,
+      "functions": [
+        "GND"
+      ]
+    },
+    "NRST": {
+      "type": "reset",
+      "fixed": true,
+      "functions": [
+        "NRST"
+      ]
+    },
+    "PA0": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "WKUP",
+        "ADC_IN0",
+        "TIM2_CH1",
+        "TIM2_ETR",
+        "USART2_CTS"
+      ]
+    },
+    "PA1": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN1",
+        "TIM2_CH2",
+        "USART2_RTS"
+      ]
+    },
+    "PA2": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN2",
+        "TIM2_CH3",
+        "TIM3_CH3",
+        "USART2_TX",
+        "OPA2_OUT0"
+      ]
+    },
+    "PA3": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN3",
+        "TIM2_CH4",
+        "TIM3_CH4",
+        "USART2_RX",
+        "OPA1_OUT0"
+      ]
+    },
+    "PA4": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN4",
+        "TIM3_CH1",
+        "USART2_CK",
+        "SPI1_NSS",
+        "OPA2_OUT1"
+      ]
+    },
+    "PA5": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN5",
+        "USART4_TX",
+        "SPI1_SCK",
+        "OPA2_CH1N"
+      ]
+    },
+    "PA6": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN6",
+        "TIM1_BKIN",
+        "TIM3_CH1",
+        "USART4_CK",
+        "SPI1_MISO",
+        "OPA1_CH1N"
+      ]
+    },
+    "PA7": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN7",
+        "TIM1_CH1N",
+        "TIM3_CH2",
+        "USART4_CTS",
+        "SPI1_MOSI",
+        "OPA2_CH1P"
+      ]
+    },
+    "PA8": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "MCO",
+        "TIM1_CH1",
+        "USART1_CK"
+      ]
+    },
+    "PA9": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM1_CH2",
+        "USART1_TX"
+      ]
+    },
+    "PA10": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM1_CH3",
+        "USART1_RX"
+      ]
+    },
+    "PA11": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM1_CH4",
+        "USART1_CTS",
+        "USB_DM",
+        "CAN1_RX"
+      ]
+    },
+    "PA12": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM1_ETR",
+        "USART1_RTS",
+        "USB_DP",
+        "CAN1_TX"
+      ]
+    },
+    "PA13": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO"
+      ]
+    },
+    "PA14": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO"
+      ]
+    },
+    "PA15": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM2_CH1",
+        "TIM2_ETR",
+        "USART4_RTS",
+        "SPI1_NSS"
+      ]
+    },
+    "PA112": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "USART1_RTS"
+      ]
+    },
+    "PB0": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN8",
+        "TIM1_CH2N",
+        "TIM3_CH3",
+        "USART4_TX",
+        "OPA1_CH1P"
+      ]
+    },
+    "PB1": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN9",
+        "TIM1_CH3N",
+        "TIM3_CH4",
+        "USART4_RX",
+        "OPA1_OUT1"
+      ]
+    },
+    "PB2": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "BOOT1",
+        "USART4_CK"
+      ]
+    },
+    "PB3": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM2_CH2",
+        "USART4_CTS",
+        "SPI1_SCK"
+      ]
+    },
+    "PB4": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "USART4_RTS",
+        "SPI1_MISO"
+      ]
+    },
+    "PB5": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM3_CH2",
+        "USART4_RX",
+        "I2C1_SMBA",
+        "SPI1_MOSI"
+      ]
+    },
+    "PB6": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM4_CH1",
+        "USART1_CK",
+        "USBFS_DM",
+        "I2C1_SCL"
+      ]
+    },
+    "PB7": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM4_CH2",
+        "USART1_TX",
+        "USBFS_DP",
+        "I2C1_SDA"
+      ]
+    },
+    "PB8": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM4_CH3",
+        "I2C1_SCL",
+        "CAN1_RX"
+      ]
+    },
+    "PB9": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM4_CH4",
+        "I2C1_SDA",
+        "CAN1_TX"
+      ]
+    },
+    "PB10": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM2_CH3",
+        "USART3_TX",
+        "I2C2_SCL",
+        "OPA2_CH0N"
+      ]
+    },
+    "PB11": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM2_CH4",
+        "USART3_RX",
+        "I2C2_SDA",
+        "OPA1_CH0N"
+      ]
+    },
+    "PB12": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM1_BKIN",
+        "USART3_CK",
+        "I2C2_SMBA",
+        "SPI2_NSS"
+      ]
+    },
+    "PB13": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM1_CH1N",
+        "USART3_CTS",
+        "SPI2_SCK"
+      ]
+    },
+    "PB14": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM1_CH2N",
+        "USART3_RTS",
+        "SPI2_MISO",
+        "OPA2_CH0P"
+      ]
+    },
+    "PB15": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM1_CH3N",
+        "SPI2_MOSI",
+        "OPA1_CH0P"
+      ]
+    },
+    "PC0": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN10"
+      ]
+    },
+    "PC1": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN11"
+      ]
+    },
+    "PC2": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN12"
+      ]
+    },
+    "PC3": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN13"
+      ]
+    },
+    "PC4": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN14"
+      ]
+    },
+    "PC5": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "ADC_IN15"
+      ]
+    },
+    "PC6": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM3_CH1",
+        "ETH_RXP"
+      ]
+    },
+    "PC7": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM3_CH2",
+        "ETH_PXN"
+      ]
+    },
+    "PC8": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM3_CH3",
+        "ETH_TXP"
+      ]
+    },
+    "PC9": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM3_CH4",
+        "ETH_TXN"
+      ]
+    },
+    "PC10": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "USART3_TX"
+      ]
+    },
+    "PC11": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "USART3_RX"
+      ]
+    },
+    "PC12": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "USART3_CK"
+      ]
+    },
+    "PC13": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TAMPER-RTC"
+      ]
+    },
+    "PC14": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO"
+      ]
+    },
+    "PC15": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "SWDI0",
+        "SWCLK"
+      ]
+    },
+    "PD0": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "OSC_IN",
+        "OSC32_IN"
+      ]
+    },
+    "PD1": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "OSC_OUT",
+        "OSC32_OUT"
+      ]
+    },
+    "PD2": {
+      "type": "gpio",
+      "fixed": false,
+      "functions": [
+        "GPIO",
+        "TIM3_ETR"
+      ]
+    }
+  }
+}
