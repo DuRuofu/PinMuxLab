@@ -5,6 +5,8 @@
     "name": "CH32V003F4U6",
     "core": "RISC-V",
     "package": "QFN20",
+    "flash": "16K",
+    "sram": "2K",
     "datasheet": "https://item.szlcsc.com/datasheet/CH32V003F4U6/6049934.html"
   },
 

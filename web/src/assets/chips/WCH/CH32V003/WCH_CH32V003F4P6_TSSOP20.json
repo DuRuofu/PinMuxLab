@@ -5,6 +5,8 @@
     "name": "CH32V003F4P6",
     "core": "RISC-V",
     "package": "TSSOP20",
+    "flash": "16K",
+    "sram": "2K",
     "datasheet": "https://item.szlcsc.com/datasheet/CH32V003F4P6/5858783.html"
   },
 

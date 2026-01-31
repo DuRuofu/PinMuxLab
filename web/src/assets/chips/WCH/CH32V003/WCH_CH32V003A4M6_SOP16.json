@@ -5,6 +5,8 @@
     "name": "CH32V003A4M6",
     "core": "RISC-V",
     "package": "SOP16",
+    "flash": "16K",
+    "sram": "2K",
     "datasheet": "https://www.wch.cn/products/CH32V003A4M6.html"
   },
 
