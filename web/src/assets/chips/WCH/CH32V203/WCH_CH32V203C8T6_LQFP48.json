@@ -68,18 +68,20 @@
 "peripherals": {
   "SYS": {
         "Description": "系统配置外设",
-        "":[{
-            "SWDI0": "PC15",
-            "SWCLK": "PC15",
+        "":{
+          "pinmaps":[{
+            "SWDI0": "PA13",
+            "SWCLK": "PA14",
             "WKUP": "PA0",
             "BOOT1":"PB2",
             "OSC_IN": "PD0",
             "OSC_OUT": "PD1",
-            "OSC32_IN": "PD0",
-            "OSC32_OUT": "PD1",
+            "OSC32_IN": "PC14",
+            "OSC32_OUT": "PC15",
             "MCO": "PA8",
             "TAMPER-RTC": "PC13"
         }]
+        }
   },
   "ADC": {
     "Description": "ADC",

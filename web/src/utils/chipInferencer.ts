@@ -69,8 +69,11 @@ export function inferChipData(raw: any): ChipDefinition {
       
       const signals: Record<string, string[]> = {}
       
-      if (subData && subData.pinmaps) {
-        subData.pinmaps.forEach((pinmap: any) => {
+      // Handle both object with pinmaps and direct array (robustness)
+      const pinmaps = Array.isArray(subData) ? subData : (subData?.pinmaps || [])
+
+      if (pinmaps.length > 0) {
+        pinmaps.forEach((pinmap: any) => {
           for (const signalName in pinmap) {
             const pinName = pinmap[signalName]
             
