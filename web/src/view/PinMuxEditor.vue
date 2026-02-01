@@ -48,8 +48,19 @@ const chipOptions = computed(() => {
 })
 
 const chipStore = useChipStore()
-const selectedPin = ref<RenderedPin | null>(null)
-const selectedPinFunctions = ref<string[]>([])
+
+// Selected Pin Logic (Linked to Store)
+const selectedPin = computed(() => {
+  if (!chipStore.selectedPinName || !chipStore.currentChip) return null
+  // Find physical pin data
+  const pin = chipStore.currentChip.package.pins.find(p => p.name === chipStore.selectedPinName)
+  return pin || null
+})
+
+const selectedPinFunctions = computed(() => {
+  if (!chipStore.selectedPinName) return []
+  return chipStore.getPinFunctions(chipStore.selectedPinName)
+})
 
 // Context Menu State
 const showContextMenu = ref(false)
@@ -202,8 +213,7 @@ function onClearConfig() {
 
 function onPinClick(pin: RenderedPin) {
   console.log('Pin Clicked:', pin)
-  selectedPin.value = pin
-  selectedPinFunctions.value = chipStore.getPinFunctions(pin.name)
+  chipStore.setSelectedPin(pin.name)
   // Hide context menu if open
   showContextMenu.value = false
 }
@@ -211,8 +221,7 @@ function onPinClick(pin: RenderedPin) {
 function handlePinContextMenu(pin: RenderedPin, event: MouseEvent) {
   console.log('Pin Right Clicked:', pin)
   // 同时也选中该引脚，方便侧边栏同步显示
-  selectedPin.value = pin
-  selectedPinFunctions.value = chipStore.getPinFunctions(pin.name)
+  chipStore.setSelectedPin(pin.name)
   
   contextMenuPin.value = pin
   contextMenuFunctions.value = chipStore.getPinFunctions(pin.name)

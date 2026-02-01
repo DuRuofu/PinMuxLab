@@ -271,6 +271,20 @@ function onHeaderCheckboxChange(event: Event) {
     })
   }
 }
+
+function handleRowClick(signal: any) {
+  // 1. If a pin is currently configured/selected for this signal, show it
+  const currentPin = getSelectedPinForSignal(signal.name, signal.options)
+  if (currentPin) {
+    chipStore.setSelectedPin(currentPin)
+    return
+  }
+
+  // 2. If only one option exists, show it (even if not configured)
+  if (signal.options.length === 1 && signal.options[0]) {
+    chipStore.setSelectedPin(signal.options[0].pinName)
+  }
+}
 </script>
 
 <template>
@@ -321,6 +335,7 @@ function onHeaderCheckboxChange(event: Event) {
           :key="signal.name" 
           class="signal-row"
           :class="{ 'conflict-row': isSignalFullyOccupied(signal) }"
+          @click="handleRowClick(signal)"
         >
           <div class="signal-label">{{ signal.name }}</div>
           
@@ -334,6 +349,7 @@ function onHeaderCheckboxChange(event: Event) {
               :checked="isPinSelected(signal.options[0].pinName, signal.name)"
               :disabled="isPinOccupied(signal.options[0].pinName, signal.name)"
               @change="onCheckboxChange(signal.name, signal.options[0].pinName, $event)"
+              @click.stop
             />
           </div>
 
@@ -342,6 +358,7 @@ function onHeaderCheckboxChange(event: Event) {
             <select 
               :value="getSelectedPinForSignal(signal.name, signal.options)"
               @change="onSelectChange(signal.name, $event)"
+              @click.stop
               :class="{ 'occupied-bg': getSelectedPinForSignal(signal.name, signal.options) && isPinOccupied(getSelectedPinForSignal(signal.name, signal.options), signal.name) }"
             >
             <option value="">Not Selected</option>
@@ -492,11 +509,22 @@ function onHeaderCheckboxChange(event: Event) {
   font-size: 0.8rem;
   padding: 4px;
   border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.signal-row:hover {
+  background-color: var(--hover-bg);
 }
 
 .signal-label {
   font-weight: 500;
   color: var(--text-secondary);
+}
+
+.conflict-row .signal-label,
+.conflict-row .pin-name {
+  color: inherit;
 }
 
 .control-single {

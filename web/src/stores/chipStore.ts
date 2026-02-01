@@ -7,12 +7,14 @@ export const useChipStore = defineStore('chip', () => {
   // State
   const currentChip = ref<ChipDefinition | null>(null)
   const pinConfigurations = ref<Record<string, string>>({}) // Key: PinName, Value: SelectedFunction
+  const selectedPinName = ref<string | null>(null)
   const isLoaded = computed(() => !!currentChip.value)
 
   // Actions
   function loadChip(rawData: any) {
     const data = inferChipData(rawData)
     currentChip.value = data
+    selectedPinName.value = null // Reset selection on chip load
     // 尝试从 localStorage 加载配置
     const storageKey = `pinmux_config_${data.meta.name}`
     const savedConfig = localStorage.getItem(storageKey)
@@ -61,6 +63,10 @@ export const useChipStore = defineStore('chip', () => {
     }
     // 保存到 localStorage
     saveConfigurations()
+  }
+
+  function setSelectedPin(pinName: string | null) {
+    selectedPinName.value = pinName
   }
 
   function getPinConfiguration(pinName: string): string | undefined {
@@ -126,15 +132,17 @@ export const useChipStore = defineStore('chip', () => {
 
   return {
     currentChip,
+    pinConfigurations,
+    selectedPinName,
     isLoaded,
     physicalPins,
-    pinConfigurations,
+    usageStats,
     loadChip,
     setPinFunction,
+    setSelectedPin,
     getPinConfiguration,
     getPinFunctions,
     getPinType,
-    clearConfigurations,
-    usageStats
+    clearConfigurations
   }
 })
