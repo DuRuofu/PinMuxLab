@@ -24,11 +24,14 @@ export function inferChipData(raw: any): ChipDefinition {
   let isOldFormat = false
   
   if (hasPeripherals) {
-    const firstPeriph = rawPeripherals[periphKeys[0]]
-    // Check if the first peripheral has 'pinmaps' or 'signals' directly
-    // Also check if it already has 'group' (idempotency)
-    if (firstPeriph.pinmaps || firstPeriph.signals || firstPeriph.group) {
-      isOldFormat = true
+    const firstKey = periphKeys[0]
+    if (firstKey) {
+      const firstPeriph = rawPeripherals[firstKey]
+      // Check if the first peripheral has 'pinmaps' or 'signals' directly
+      // Also check if it already has 'group' (idempotency)
+      if (firstPeriph && (firstPeriph.pinmaps || firstPeriph.signals || firstPeriph.group)) {
+        isOldFormat = true
+      }
     }
   } else {
     // If no peripherals, rely on 'pins' existence to decide if it's a valid definition

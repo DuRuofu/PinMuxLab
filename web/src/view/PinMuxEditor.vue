@@ -194,8 +194,7 @@ function onChipSelect(event: Event) {
 }
 
 function resetSelection() {
-  selectedPin.value = null
-  selectedPinFunctions.value = []
+  chipStore.setSelectedPin(null)
 }
 
 

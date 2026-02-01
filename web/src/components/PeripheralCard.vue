@@ -22,6 +22,7 @@ watch(selectedMapIndex, (newVal, oldVal) => {
   if (!props.definition.pinmaps || props.definition.pinmaps.length <= oldVal) return
 
   const oldMap = props.definition.pinmaps[oldVal]
+  if (!oldMap) return
   
   // 2. Iterate through signals in the old map
   for (const [signal, pin] of Object.entries(oldMap)) {
@@ -84,11 +85,13 @@ const signals = computed(() => {
     // If strict mode, we only use the active map
     // If there is only one map, it's index 0, so it works the same.
     
-    for (const [signal, pin] of Object.entries(activeMap)) {
-      if (!map.has(signal)) {
-        map.set(signal, [])
+    if (activeMap) {
+      for (const [signal, pin] of Object.entries(activeMap)) {
+        if (!map.has(signal)) {
+          map.set(signal, [])
+        }
+        map.get(signal)!.push({ pinName: pin, schemeIndex: selectedMapIndex.value })
       }
-      map.get(signal)!.push({ pinName: pin, schemeIndex: selectedMapIndex.value })
     }
   } else {
     // Fallback for flat signals definition

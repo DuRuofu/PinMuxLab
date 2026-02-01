@@ -93,6 +93,56 @@ const layout = computed(() => {
   return calculateLayout(props.packageInfo)
 })
 
+// 计算功能标签位置
+function getFunctionLabelPos(pin: RenderedPin) {
+  if (!layout.value) return { x: 0, y: 0, anchor: 'middle', baseline: 'middle' }
+  
+  const body = layout.value.body
+  const gap = 8 // 文字距离引脚的间隙
+  
+  // 判定方位
+  const isLeft = Math.abs((pin.x + pin.width) - body.x) < 1
+  const isRight = Math.abs(pin.x - (body.x + body.width)) < 1
+  const isTop = Math.abs((pin.y + pin.height) - body.y) < 1
+  const isBottom = Math.abs(pin.y - (body.y + body.height)) < 1
+  
+  if (isLeft) {
+    return {
+      x: pin.x - gap,
+      y: pin.y + pin.height / 2,
+      anchor: 'end',
+      baseline: 'middle',
+      rotation: 0
+    }
+  } else if (isRight) {
+    return {
+      x: pin.x + pin.width + gap,
+      y: pin.y + pin.height / 2,
+      anchor: 'start',
+      baseline: 'middle',
+      rotation: 0
+    }
+  } else if (isTop) {
+    return {
+      x: pin.x + pin.width / 2,
+      y: pin.y - gap,
+      anchor: 'start', // Rotated -90: Text starts at (x,y) and goes UP
+      baseline: 'middle', // Centered horizontally relative to pin width
+      rotation: -90
+    }
+  } else if (isBottom) {
+    return {
+      x: pin.x + pin.width / 2,
+      y: pin.y + pin.height + gap,
+      anchor: 'end', // Rotated -90: Text ends at (x,y) (starts below)
+      baseline: 'middle',
+      rotation: -90
+    }
+  }
+  
+  return { x: pin.x, y: pin.y, anchor: 'middle', baseline: 'middle', rotation: 0 }
+}
+
 function handlePinClick(pin: RenderedPin) {
   emit('pin-click', pin)
 }
@@ -200,6 +250,19 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
           class="pin-label"
         >
           {{ pin.name }}
+        </text>
+
+        <!-- 功能名称 (选中时显示) -->
+        <text
+          v-if="isPinConfigured(pin.name)"
+          :x="getFunctionLabelPos(pin).x"
+          :y="getFunctionLabelPos(pin).y"
+          :text-anchor="getFunctionLabelPos(pin).anchor"
+          :dominant-baseline="getFunctionLabelPos(pin).baseline"
+          :transform="`rotate(${getFunctionLabelPos(pin).rotation}, ${getFunctionLabelPos(pin).x}, ${getFunctionLabelPos(pin).y})`"
+          class="pin-function-label"
+        >
+          {{ pinConfigurations?.[pin.name] }}
         </text>
       </g>
     </svg>
@@ -368,10 +431,22 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
 }
 
 .pin-label {
-  font-size: 8px; /* 调小字体 */
+  font-size: 10px; /* 8px -> 10px */
   font-family: monospace;
   fill: #000; /* 改为黑色，因为背景是银色 */
   pointer-events: none; /* 让点击穿透到 rect */
   font-weight: bold;
+}
+
+.pin-function-label {
+  font-size: 10px;
+  font-family: monospace;
+  font-weight: bold;
+  fill: var(--chip-label-color);
+  paint-order: stroke;
+  stroke: var(--chip-viz-bg);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  pointer-events: none;
 }
 </style>

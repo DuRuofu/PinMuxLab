@@ -23,6 +23,7 @@
   
   /* Chip Visualization Variables */
   --chip-viz-bg: #f0f0f0;
+  --chip-label-color: #000000;
   --zoom-control-bg: #ffffff;
   --zoom-control-text: #555555;
   --zoom-control-hover: #f0f0f0;
@@ -54,6 +55,7 @@
   
   /* Chip Visualization Variables */
   --chip-viz-bg: #121212;
+  --chip-label-color: #ffffff;
   --zoom-control-bg: #333333;
   --zoom-control-text: #dddddd;
   --zoom-control-hover: #444444;
