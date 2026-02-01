@@ -6,10 +6,11 @@ import { useChipStore } from '@/stores/chipStore'
 const props = defineProps<{
   name: string
   definition: PeripheralDefinition
+  initialCollapsed?: boolean
 }>()
 
 const chipStore = useChipStore()
-const isCollapsed = ref(true)
+const isCollapsed = ref(props.initialCollapsed ?? true)
 
 function toggleCollapse() {
   isCollapsed.value = !isCollapsed.value
@@ -112,13 +113,76 @@ function onSelectChange(signal: string, event: Event) {
     if (targetFunc) chipStore.setPinFunction(newPin, targetFunc)
   }
 }
+
+// Check if all available signals (that CAN be selected) are currently selected
+const isAllSelected = computed(() => {
+  if (signals.value.length === 0) return false
+  
+  return signals.value.every(signal => {
+    // 1. Is it currently selected?
+    const currentPin = getSelectedPinForSignal(signal.name, signal.options)
+    if (currentPin) return true
+    
+    // 2. If not selected, does it have any valid option?
+    // If it has NO valid options (all occupied), we consider it "as satisfied as possible"
+    // so it doesn't block the "All Selected" state.
+    const hasAvailableOption = signal.options.some(opt => !isPinOccupied(opt.pinName, signal.name))
+    
+    // If it has available options but is not selected -> NOT all selected
+    if (hasAvailableOption) return false
+    
+    // If no available options -> Ignored (count as selected/satisfied)
+    return true
+  })
+})
+
+function onHeaderCheckboxChange(event: Event) {
+  const checked = (event.target as HTMLInputElement).checked
+  
+  if (checked) {
+    // Select All Available
+    signals.value.forEach(signal => {
+      // Check if already selected
+      const currentPin = getSelectedPinForSignal(signal.name, signal.options)
+      if (currentPin) return // Already configured
+      
+      // Find candidate (first non-occupied option)
+      const candidate = signal.options.find(opt => !isPinOccupied(opt.pinName, signal.name))
+      
+      // If we have a candidate, select it
+      if (candidate) {
+        const targetFunc = getTargetFunction(candidate.pinName, signal.name)
+        if (targetFunc) {
+          chipStore.setPinFunction(candidate.pinName, targetFunc)
+        }
+      }
+    })
+  } else {
+    // Deselect All
+    signals.value.forEach(signal => {
+      const currentPin = getSelectedPinForSignal(signal.name, signal.options)
+      if (currentPin) {
+        chipStore.setPinFunction(currentPin, '')
+      }
+    })
+  }
+}
 </script>
 
 <template>
   <div class="peripheral-card">
     <div class="card-header" @click="toggleCollapse">
       <span class="periph-name">{{ name }} Pin Config</span>
-      <span class="collapse-icon">{{ isCollapsed ? '▼' : '▲' }}</span>
+      <div class="header-controls">
+        <input 
+          type="checkbox" 
+          :checked="isAllSelected" 
+          @click.stop 
+          @change="onHeaderCheckboxChange"
+          title="Select All Available"
+        />
+        <span class="collapse-icon">{{ isCollapsed ? '▼' : '▲' }}</span>
+      </div>
     </div>
     
     <div v-if="!isCollapsed" class="signals-list">
@@ -195,6 +259,13 @@ function onSelectChange(signal: string, event: Event) {
   font-size: 0.85rem;
   color: var(--text-primary);
 }
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 
 .occupied-bg {
   background-color: #ffebee; /* Light red background */

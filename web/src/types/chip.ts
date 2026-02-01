@@ -65,6 +65,10 @@ export interface PinCapability {
 export interface PeripheralDefinition {
   /** 外设类型，如 "uart", "spi", "i2c", "timer" */
   type: string
+  /** 外设分组，如 "GPTM", "ADTM", "USART" */
+  group?: string
+  /** 外设描述，如 "通用定时器" */
+  description?: string
   /** 信号映射表 */
   /** Key: 信号名称 (如 "TX", "SCK") */
   /** Value: 支持该信号的引脚名称列表 (如 ["PA2", "PB10"]) */

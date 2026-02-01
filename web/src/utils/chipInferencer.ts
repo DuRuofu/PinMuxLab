@@ -13,15 +13,31 @@ interface NewPeripheralMap {
  * If data is already in Old Format (has complete pins and flat peripherals), returns it as is.
  */
 export function inferChipData(raw: any): ChipDefinition {
-  // 1. Check if it's already in Old Format (has 'pins' with capabilities and flat peripherals)
-  // Simple check: if pins exists and first key has 'functions' array
-  const hasPins = raw.pins && Object.keys(raw.pins).length > 0
-  const firstPin = hasPins ? Object.values(raw.pins)[0] : null
-  const isOldFormat = hasPins && (firstPin as any).functions
+  // 1. Determine Format based on Peripherals structure
+  // Old/Flat Format: Peripherals are flat objects with 'pinmaps' or 'signals' directly.
+  // New/Nested Format: Peripherals are grouped by Category (e.g. ADTM -> TIM1). Values have 'Description' or sub-objects.
   
-  // If strictly Old Format, we might still want to normalize peripherals if they are mixed?
-  // But user request implies we are moving TO New Format on disk, but App needs Old Format structure.
-  // If input is Old Format, we assume it matches ChipDefinition interface.
+  const rawPeripherals = raw.peripherals || {}
+  const periphKeys = Object.keys(rawPeripherals)
+  const hasPeripherals = periphKeys.length > 0
+  
+  let isOldFormat = false
+  
+  if (hasPeripherals) {
+    const firstPeriph = rawPeripherals[periphKeys[0]]
+    // Check if the first peripheral has 'pinmaps' or 'signals' directly
+    // Also check if it already has 'group' (idempotency)
+    if (firstPeriph.pinmaps || firstPeriph.signals || firstPeriph.group) {
+      isOldFormat = true
+    }
+  } else {
+    // If no peripherals, rely on 'pins' existence to decide if it's a valid definition
+    if (raw.pins && Object.keys(raw.pins).length > 0) {
+      isOldFormat = true
+    }
+  }
+
+  // If strictly Old Format, return as is.
   if (isOldFormat) {
     return raw as ChipDefinition
   }
@@ -29,7 +45,7 @@ export function inferChipData(raw: any): ChipDefinition {
   // 2. It's New Format (or missing pins). We need to infer 'pins' and normalize 'peripherals'.
   
   const pkg: PackageInfo = raw.package
-  const rawPeripherals: NewPeripheralMap = raw.peripherals || {}
+  // const rawPeripherals is already defined at top of function
   
   // Data structures for inference
   const pinFunctions: Record<string, Set<string>> = {}
@@ -55,6 +71,7 @@ export function inferChipData(raw: any): ChipDefinition {
 
   for (const categoryKey in rawPeripherals) {
     const categoryData = rawPeripherals[categoryKey]
+    const categoryDesc = categoryData.Description || ''
     
     for (const subKey in categoryData) {
       if (subKey === 'Description') continue
@@ -66,6 +83,10 @@ export function inferChipData(raw: any): ChipDefinition {
       // Old format expected 'type' like 'uart', 'timer'.
       // We can map known categories or just use the categoryKey.
       const periphType = mapCategoryToType(categoryKey)
+      
+      // Define peripheral name (e.g., TIM1, USART1)
+      // If subKey is empty (e.g. SYS), use categoryKey
+      const periphName = (subKey === '' || subKey === 'default') ? categoryKey : subKey
       
       const signals: Record<string, string[]> = {}
       
@@ -81,11 +102,6 @@ export function inferChipData(raw: any): ChipDefinition {
             let funcName = ''
             // If subKey is empty string (e.g. in SYS), use signalName directly?
             // In JSON example: "SYS": { "": [ ... ] }
-            // Wait, looking at V203 JSON: "SYS": { "": [...] } is not present.
-            // "SYS": { "SWDI0": "PC15" } direct mapping?
-            // Re-checking V203 JSON:
-            // "SYS": { "Description": "...", "": [{ "SWDI0": "PC15", ... }] }
-            // So subKey is empty string "".
             
             if (subKey === '' || subKey === 'default') {
                funcName = signalName
@@ -106,15 +122,10 @@ export function inferChipData(raw: any): ChipDefinition {
         })
       }
       
-      // Store normalized peripheral
-      // If subKey is empty, we might skip adding it to 'peripherals' map?
-      // Or use categoryKey?
-      // For SYS, typically it's not selected as a peripheral in PinMux?
-      // But we should probably preserve it.
-      const periphName = subKey === '' ? categoryKey : subKey
-      
       normalizedPeripherals[periphName] = {
         type: periphType,
+        group: categoryKey, // Store the original category key as group
+        description: categoryDesc, // Store category description
         signals: signals,
         pinmaps: pinmaps
       }
