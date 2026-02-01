@@ -87,6 +87,36 @@ export const useChipStore = defineStore('chip', () => {
   }
 
   /**
+   * 获取引脚占用统计
+   */
+  const usageStats = computed(() => {
+    if (!currentChip.value) return { occupied: 0, total: 0 }
+    
+    const allPins = currentChip.value.package.pins
+    const total = allPins.length
+    let occupied = 0
+    
+    for (const pin of allPins) {
+      const pinCap = currentChip.value.pins[pin.name]
+      if (!pinCap) continue // Should not happen
+      
+      // 1. 固定功能的引脚（如电源、地、复位等）默认视为占用
+      if (pinCap.fixed) {
+        occupied++
+        continue
+      }
+      
+      // 2. 被用户配置了功能的引脚
+      // 注意：getPinConfiguration 返回 undefined 表示未配置
+      if (pinConfigurations.value[pin.name]) {
+        occupied++
+      }
+    }
+    
+    return { occupied, total }
+  })
+
+  /**
    * 获取物理引脚信息（编号和名称）
    */
   const physicalPins = computed(() => {
@@ -100,10 +130,11 @@ export const useChipStore = defineStore('chip', () => {
     physicalPins,
     pinConfigurations,
     loadChip,
-    getPinFunctions,
-    getPinType,
     setPinFunction,
     getPinConfiguration,
-    clearConfigurations
+    getPinFunctions,
+    getPinType,
+    clearConfigurations,
+    usageStats
   }
 })

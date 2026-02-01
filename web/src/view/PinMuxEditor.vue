@@ -2,6 +2,7 @@
 import { onMounted, ref, computed, watch } from 'vue'
 import { useChipStore } from '@/stores/chipStore'
 import ChipPackage from '@/components/ChipPackage.vue'
+import PeripheralList from '@/components/PeripheralList.vue'
 import IconSun from '@/components/icons/IconSun.vue'
 import IconMoon from '@/components/icons/IconMoon.vue'
 import type { RenderedPin } from '@/utils/packageLayout'
@@ -304,21 +305,7 @@ const isSelectedPinFixed = computed(() => {
     </header>
 
     <main>
-      <div class="visualization-area">
-        <ChipPackage 
-          v-if="chipStore.isLoaded"
-          :key="chipStore.currentChip?.meta.name"
-          :package-info="chipStore.currentChip!.package"
-          :chip-meta="chipStore.currentChip!.meta"
-          :pin-configurations="chipStore.pinConfigurations"
-          :pin-capabilities="chipStore.currentChip?.pins"
-          @pin-click="onPinClick"
-          @pin-contextmenu="handlePinContextMenu"
-        />
-        <div v-else class="loading">Loading...</div>
-      </div>
-
-      <aside class="sidebar">
+      <aside class="sidebar left-sidebar">
         <div v-if="selectedPin" class="pin-details">
           <div class="pin-header">
             <h2>{{ selectedPin.name }}</h2>
@@ -396,6 +383,27 @@ const isSelectedPinFixed = computed(() => {
             Loading chip data...
           </div>
         </div>
+      </aside>
+
+      <div class="visualization-area">
+        <div v-if="chipStore.isLoaded" class="usage-stats">
+          {{ chipStore.usageStats.occupied }} / {{ chipStore.usageStats.total }}
+        </div>
+        <ChipPackage 
+          v-if="chipStore.isLoaded"
+          :key="chipStore.currentChip?.meta.name"
+          :package-info="chipStore.currentChip!.package"
+          :chip-meta="chipStore.currentChip!.meta"
+          :pin-configurations="chipStore.pinConfigurations"
+          :pin-capabilities="chipStore.currentChip?.pins"
+          @pin-click="onPinClick"
+          @pin-contextmenu="handlePinContextMenu"
+        />
+        <div v-else class="loading">Loading...</div>
+      </div>
+
+      <aside class="sidebar right-sidebar">
+        <PeripheralList />
       </aside>
 
     <!-- Context Menu -->
@@ -605,13 +613,39 @@ main {
   color: var(--text-secondary);
 }
 
+.usage-stats {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: var(--bg-tertiary);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-weight: 600;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .sidebar {
-  width: 300px;
+  /* width: 300px; - Removed fixed width for base class */
   background-color: var(--bg-secondary);
-  border-left: 1px solid var(--border-color);
   padding: 1rem;
   overflow-y: auto;
   flex-shrink: 0;
+}
+
+.left-sidebar {
+  width: 250px; /* Narrower left sidebar */
+  border-right: 1px solid var(--border-color);
+}
+
+.right-sidebar {
+  width: 350px; /* Wider right sidebar */
+  border-left: 1px solid var(--border-color);
+  padding: 0; /* PeripheralList has its own padding */
+  overflow-y: hidden;
 }
 
 .pin-details {

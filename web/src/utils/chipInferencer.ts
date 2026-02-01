@@ -115,7 +115,8 @@ export function inferChipData(raw: any): ChipDefinition {
       
       normalizedPeripherals[periphName] = {
         type: periphType,
-        signals: signals
+        signals: signals,
+        pinmaps: pinmaps
       }
     }
   }

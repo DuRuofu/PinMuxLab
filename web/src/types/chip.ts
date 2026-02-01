@@ -69,6 +69,8 @@ export interface PeripheralDefinition {
   /** Key: 信号名称 (如 "TX", "SCK") */
   /** Value: 支持该信号的引脚名称列表 (如 ["PA2", "PB10"]) */
   signals: Record<string, string[]>
+  /** 原始引脚映射方案列表 */
+  pinmaps: Array<Record<string, string>>
 }
 
 /**
