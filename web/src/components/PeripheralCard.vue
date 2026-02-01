@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { PeripheralDefinition } from '@/types/chip'
 import { useChipStore } from '@/stores/chipStore'
 
@@ -15,6 +15,27 @@ const isCollapsed = ref(props.initialCollapsed ?? true)
 // Logic for multiple pinmaps (Remap/Alternate Configurations)
 const selectedMapIndex = ref(0)
 const hasMultipleMaps = computed(() => props.definition.pinmaps && props.definition.pinmaps.length > 1)
+
+// Watcher to handle Pinmap Switching (Clear previous configuration)
+watch(selectedMapIndex, (newVal, oldVal) => {
+  // 1. Identify pins from the PREVIOUS map (oldVal)
+  if (!props.definition.pinmaps || props.definition.pinmaps.length <= oldVal) return
+
+  const oldMap = props.definition.pinmaps[oldVal]
+  
+  // 2. Iterate through signals in the old map
+  for (const [signal, pin] of Object.entries(oldMap)) {
+    // 3. Check if the pin is currently assigned to THIS peripheral/signal
+    // We use isPinSelected logic: if the pin's current function matches what this signal expects
+    if (isPinSelected(pin, signal)) {
+      // 4. Unassign the pin
+      chipStore.setPinFunction(pin, '') // or setPinConfiguration(pin, null)
+    }
+  }
+  
+  // Note: The UI for the NEW map will be rendered reactively, starting with empty/clean state
+  // because we just cleared the conflicting assignments from the old map.
+})
 
 // Initialize the selected map based on current assignments
 function detectInitialMap() {
