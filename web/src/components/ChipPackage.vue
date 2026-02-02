@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useChipStore } from '@/stores/chipStore'
 import type { PackageInfo, ChipMeta, PinCapability } from '@/types/chip'
 import { calculateLayout, type RenderedPin } from '@/utils/packageLayout'
 
@@ -9,6 +10,8 @@ const props = defineProps<{
   pinConfigurations?: Record<string, string>
   pinCapabilities?: Record<string, PinCapability>
 }>()
+
+const chipStore = useChipStore()
 
 const emit = defineEmits<{
   (e: 'pin-click', pin: RenderedPin): void
@@ -236,7 +239,10 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
           :height="pin.height"
           class="pin-shape"
           :class="[
-            { 'is-configured': isPinConfigured(pin.name) },
+            { 
+              'is-configured': isPinConfigured(pin.name),
+              'pin-hover': chipStore.hoveredPinName === pin.name 
+            },
             getPinTypeClass(pin.name)
           ]"
         />
@@ -390,18 +396,45 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
   stroke-width: 2;
 }
 
+.pin-shape:hover,
+.pin-shape.pin-hover {
+  fill: var(--pin-hover);
+  stroke-width: 2;
+  stroke: #555;
+  filter: brightness(1.1);
+}
+
 /* Special Pin Types */
 .pin-shape.pin-type-power {
   fill: var(--pin-power);
 }
+.pin-shape.pin-type-power:hover,
+.pin-shape.pin-type-power.pin-hover {
+  fill: var(--pin-power-hover);
+}
+
 .pin-shape.pin-type-gnd {
   fill: var(--pin-gnd);
 }
+.pin-shape.pin-type-gnd:hover,
+.pin-shape.pin-type-gnd.pin-hover {
+  fill: var(--pin-gnd-hover);
+}
+
 .pin-shape.pin-type-reset {
   fill: var(--pin-reset);
 }
+.pin-shape.pin-type-reset:hover,
+.pin-shape.pin-type-reset.pin-hover {
+  fill: var(--pin-reset-hover);
+}
+
 .pin-shape.pin-type-boot {
   fill: var(--pin-boot);
+}
+.pin-shape.pin-type-boot:hover,
+.pin-shape.pin-type-boot.pin-hover {
+  fill: var(--pin-boot-hover);
 }
 
 /* Hover Effects */

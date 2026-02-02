@@ -87,16 +87,3 @@ body.dark-mode .status-error {
   background-color: #b71c1c !important;
   color: #ffebee;
 }
-
-/* Status Icons */
-.status-icon {
-  font-weight: bold;
-  font-size: 1.1em;
-}
-.status-success .status-icon { color: #2e7d32; }
-.status-warning .status-icon { color: #ef6c00; }
-.status-error .status-icon { color: #c62828; }
-
-body.dark-mode .status-success .status-icon { color: #a5d6a7; }
-body.dark-mode .status-warning .status-icon { color: #ffcc80; }
-body.dark-mode .status-error .status-icon { color: #ef9a9a; }

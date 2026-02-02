@@ -10,6 +10,7 @@ export const useChipStore = defineStore('chip', () => {
   const currentChip = ref<ChipDefinition | null>(null)
   const pinConfigurations = ref<Record<string, string>>({}) // Key: PinName, Value: SelectedFunction
   const selectedPinName = ref<string | null>(null)
+  const hoveredPinName = ref<string | null>(null)
   const isLoaded = computed(() => !!currentChip.value)
 
   // Actions
@@ -209,6 +210,10 @@ export const useChipStore = defineStore('chip', () => {
     selectedPinName.value = pinName
   }
 
+  function setHoveredPin(pinName: string | null) {
+    hoveredPinName.value = pinName
+  }
+
   function getPinConfiguration(pinName: string): string | undefined {
     return pinConfigurations.value[pinName]
   }
@@ -274,12 +279,14 @@ export const useChipStore = defineStore('chip', () => {
     currentChip,
     pinConfigurations,
     selectedPinName,
+    hoveredPinName,
     isLoaded,
     physicalPins,
     usageStats,
     loadChip,
     setPinFunction,
     setSelectedPin,
+    setHoveredPin,
     getPinConfiguration,
     getPinFunctions,
     getPinType,

@@ -160,15 +160,6 @@ const cardStatus = computed(() => {
   return 'default'
 })
 
-const statusIcon = computed(() => {
-  switch (cardStatus.value) {
-    case 'error': return '✕' // Cross
-    case 'warning': return '!' // Exclamation
-    case 'success': return '✓' // Check
-    default: return ''
-  }
-})
-
 // Check if a specific pin is currently selected for this signal
 function isPinSelected(pinName: string, signal: string, mapIndex: number = selectedMapIndex.value): boolean {
   const currentFunc = chipStore.getPinConfiguration(pinName)
@@ -301,6 +292,35 @@ function handleRowClick(signal: any) {
     chipStore.setSelectedPin(signal.options[0].pinName)
   }
 }
+
+function handleRowHover(signal: any) {
+  // 1. If single option, highlight it
+  if (signal.options.length === 1 && signal.options[0]) {
+    chipStore.setHoveredPin(signal.options[0].pinName)
+    return
+  }
+  
+  // 2. If multi option, highlight selected
+  const selectedPin = getSelectedPinForSignal(signal.name, signal.options)
+  if (selectedPin) {
+    chipStore.setHoveredPin(selectedPin)
+  }
+}
+
+function onPinHover(pinName: string) {
+  if (pinName) chipStore.setHoveredPin(pinName)
+}
+
+function onPinLeave() {
+  chipStore.setHoveredPin(null)
+}
+
+function onSelectHover(signal: string, options: SignalOption[]) {
+  const selectedPin = getSelectedPinForSignal(signal, options)
+  if (selectedPin) {
+    chipStore.setHoveredPin(selectedPin)
+  }
+}
 </script>
 
 <template>
@@ -308,7 +328,6 @@ function handleRowClick(signal: any) {
     <div class="card-header" @click="toggleCollapse" :class="`status-${cardStatus}`">
       <div class="header-title">
         <span class="periph-name">{{ name }} Pin Config</span>
-        <span class="status-icon" v-if="statusIcon">{{ statusIcon }}</span>
       </div>
       <div class="header-controls">
         <input 
@@ -352,11 +371,16 @@ function handleRowClick(signal: any) {
           class="signal-row"
           :class="{ 'conflict-row': isSignalFullyOccupied(signal) }"
           @click="handleRowClick(signal)"
+          @mouseenter="handleRowHover(signal)"
+          @mouseleave="onPinLeave"
         >
           <div class="signal-label">{{ signal.name }}</div>
           
           <!-- Case 1: Single Option (Checkbox) -->
-          <div v-if="signal.options.length === 1 && signal.options[0]" class="control-single">
+          <div 
+            v-if="signal.options.length === 1 && signal.options[0]" 
+            class="control-single"
+          >
             <span 
               class="pin-name" 
               :class="{ 'pin-invalid': !isPinValid(signal.options[0].pinName) }"
