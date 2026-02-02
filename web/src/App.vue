@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import PinMuxEditor from '@/view/PinMuxEditor.vue'
+import GlobalModal from '@/components/GlobalModal.vue'
 </script>
 
 <template>
   <div class="app-root">
     <PinMuxEditor />
+    <GlobalModal />
   </div>
 </template>
 
