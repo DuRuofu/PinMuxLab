@@ -16,6 +16,7 @@ const chipStore = useChipStore()
 const emit = defineEmits<{
   (e: 'pin-click', pin: RenderedPin): void
   (e: 'pin-contextmenu', pin: RenderedPin, event: MouseEvent): void
+  (e: 'canvas-click'): void
 }>()
 
 // 判断引脚是否已配置
@@ -44,6 +45,8 @@ const translateX = ref(0)
 const translateY = ref(0)
 const lastX = ref(0)
 const lastY = ref(0)
+const startX = ref(0)
+const startY = ref(0)
 const containerRef = ref<HTMLElement | null>(null)
 
 function onWheel(e: WheelEvent) {
@@ -60,6 +63,8 @@ function onMouseDown(e: MouseEvent) {
   isDragging.value = true
   lastX.value = e.clientX
   lastY.value = e.clientY
+  startX.value = e.clientX
+  startY.value = e.clientY
 }
 
 function onMouseMove(e: MouseEvent) {
@@ -74,6 +79,16 @@ function onMouseMove(e: MouseEvent) {
 
 function onMouseUp() {
   isDragging.value = false
+}
+
+function handleContainerClick(e: MouseEvent) {
+  // Calculate distance moved
+  const dist = Math.sqrt(Math.pow(e.clientX - startX.value, 2) + Math.pow(e.clientY - startY.value, 2))
+  
+  // If movement is small, treat as click
+  if (dist < 5) {
+    emit('canvas-click')
+  }
 }
 
 function zoomIn() {
@@ -166,6 +181,7 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
     @mousemove="onMouseMove"
     @mouseup="onMouseUp"
     @mouseleave="onMouseUp"
+    @click="handleContainerClick"
   >
     <svg 
       :viewBox="`0 0 ${layout.width} ${layout.height}`" 

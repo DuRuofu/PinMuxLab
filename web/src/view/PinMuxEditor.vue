@@ -217,6 +217,11 @@ function onPinClick(pin: RenderedPin) {
   showContextMenu.value = false
 }
 
+function onCanvasClick() {
+  chipStore.setSelectedPin(null)
+  showContextMenu.value = false
+}
+
 function handlePinContextMenu(pin: RenderedPin, event: MouseEvent) {
   console.log('Pin Right Clicked:', pin)
   // 同时也选中该引脚，方便侧边栏同步显示
@@ -406,6 +411,7 @@ const isSelectedPinFixed = computed(() => {
           :pin-capabilities="chipStore.currentChip?.pins"
           @pin-click="onPinClick"
           @pin-contextmenu="handlePinContextMenu"
+          @canvas-click="onCanvasClick"
         />
         <div v-else class="loading">Loading...</div>
       </div>
