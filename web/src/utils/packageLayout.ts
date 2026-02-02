@@ -68,7 +68,7 @@ export function calculateQuadLayout(pkg: PackageInfo): PackageLayout {
   const sideLength = pinsPerSide * PIN_SPACING + BODY_PADDING * 2
   
   // 画布总尺寸
-  const totalSize = sideLength + PIN_HEIGHT * 2 + 100 // +100 用于留白
+  const totalSize = sideLength + PIN_HEIGHT * 2 + 200 // +100 -> +200 增加留白防止文字截断
   const center = totalSize / 2
   const bodySize = sideLength
   const bodyStart = center - bodySize / 2
