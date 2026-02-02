@@ -57,6 +57,7 @@ export const useChipStore = defineStore('chip', () => {
       // Iterate all pinmaps
       for (let mapIndex = 0; mapIndex < def.pinmaps.length; mapIndex++) {
         const map = def.pinmaps[mapIndex]
+        if (!map) continue
         const suffix = mapIndex === 0 ? '' : `_${mapIndex}`
         
         // Iterate all signals in the map

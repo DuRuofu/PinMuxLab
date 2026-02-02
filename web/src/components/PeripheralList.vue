@@ -36,6 +36,29 @@ const peripheralGroups = computed(() => {
   // However, Object.entries might not guarantee order, but typically it follows insertion for string keys
   
   Object.entries(chipStore.currentChip.peripherals).forEach(([name, def]) => {
+    // Check if peripheral has ANY valid pins on this chip package
+    // 1. Collect all pins referenced by this peripheral
+    const referencedPins = new Set<string>()
+    if (def.pinmaps && def.pinmaps.length > 0) {
+      def.pinmaps.forEach(map => {
+        Object.values(map).forEach(pin => referencedPins.add(pin))
+      })
+    } else {
+      // Fallback for signals
+      Object.values(def.signals).forEach(pins => {
+        pins.forEach(pin => referencedPins.add(pin))
+      })
+    }
+    
+    // 2. Check if ANY of these pins exist in the physical package
+    const physicalPins = chipStore.physicalPins
+    const hasAnyValidPin = Array.from(referencedPins).some(pinName => 
+      physicalPins.some(p => p.name === pinName)
+    )
+    
+    // If no pins exist at all, skip this peripheral
+    if (!hasAnyValidPin) return
+
     // If no group is defined (old format), treat it as 'Other' or use its type
     // But inferencer now adds 'group'. If missing, use 'Other'.
     const groupName = def.group || 'Other'

@@ -198,6 +198,12 @@ function isSignalFullyOccupied(signal: { name: string, options: SignalOption[] }
   return signal.options.every(opt => isPinOccupied(opt.pinName, signal.name, opt.schemeIndex))
 }
 
+// Check if a specific pin physically exists on the chip
+function isPinValid(pinName: string): boolean {
+  if (!chipStore.currentChip) return false
+  return chipStore.physicalPins.some(p => p.name === pinName)
+}
+
 function onCheckboxChange(signal: string, pinName: string, event: Event) {
   const checked = (event.target as HTMLInputElement).checked
   if (checked) {
@@ -351,13 +357,17 @@ function handleRowClick(signal: any) {
           
           <!-- Case 1: Single Option (Checkbox) -->
           <div v-if="signal.options.length === 1 && signal.options[0]" class="control-single">
-            <span class="pin-name">
+            <span 
+              class="pin-name" 
+              :class="{ 'pin-invalid': !isPinValid(signal.options[0].pinName) }"
+              :title="!isPinValid(signal.options[0].pinName) ? 'Pin not available on this package' : ''"
+            >
               {{ signal.options[0].pinName }}
             </span>
             <input 
               type="checkbox" 
               :checked="isPinSelected(signal.options[0].pinName, signal.name)"
-              :disabled="isPinOccupied(signal.options[0].pinName, signal.name)"
+              :disabled="isPinOccupied(signal.options[0].pinName, signal.name) || !isPinValid(signal.options[0].pinName)"
               @change="onCheckboxChange(signal.name, signal.options[0].pinName, $event)"
               @click.stop
             />
@@ -376,10 +386,14 @@ function handleRowClick(signal: any) {
               v-for="opt in signal.options" 
               :key="opt.pinName" 
               :value="opt.pinName"
-              :disabled="isPinOccupied(opt.pinName, signal.name)"
-              :class="{ 'occupied-option': isPinOccupied(opt.pinName, signal.name) }"
+              :disabled="isPinOccupied(opt.pinName, signal.name) || !isPinValid(opt.pinName)"
+              :class="{ 
+                'occupied-option': isPinOccupied(opt.pinName, signal.name),
+                'invalid-option': !isPinValid(opt.pinName)
+              }"
             >
-              {{ opt.pinName }} {{ isPinOccupied(opt.pinName, signal.name) ? '(Occupied)' : '' }}
+              {{ opt.pinName }} 
+              {{ !isPinValid(opt.pinName) ? '(N/A)' : (isPinOccupied(opt.pinName, signal.name) ? '(Occupied)' : '') }}
             </option>
           </select>
         </div>
@@ -481,6 +495,19 @@ function handleRowClick(signal: any) {
   display: none;
 }
 
+.pin-invalid {
+  text-decoration: line-through;
+  background-color: rgba(255, 0, 0, 0.1);
+  color: var(--text-secondary);
+  padding: 0 4px;
+  border-radius: 2px;
+}
+
+.invalid-option {
+  color: #ff4d4f; /* Red */
+  text-decoration: line-through;
+  background-color: rgba(255, 0, 0, 0.05);
+}
 
 .occupied-bg {
   background-color: #ffebee; /* Light red background */
