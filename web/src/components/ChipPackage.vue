@@ -437,6 +437,30 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
   fill: var(--pin-boot-hover);
 }
 
+.pin-shape.pin-type-clock {
+  fill: var(--pin-clock);
+}
+.pin-shape.pin-type-clock:hover,
+.pin-shape.pin-type-clock.pin-hover {
+  fill: var(--pin-clock-hover);
+}
+
+.pin-shape.pin-type-special {
+  fill: var(--pin-special);
+}
+.pin-shape.pin-type-special:hover,
+.pin-shape.pin-type-special.pin-hover {
+  fill: var(--pin-special-hover);
+}
+
+.pin-shape.pin-type-nc {
+  fill: var(--pin-nc);
+}
+.pin-shape.pin-type-nc:hover,
+.pin-shape.pin-type-nc.pin-hover {
+  fill: var(--pin-nc-hover);
+}
+
 /* Hover Effects */
 .pin-group:hover .pin-shape {
   fill: var(--pin-hover);
@@ -454,6 +478,15 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
 }
 .pin-group:hover .pin-shape.pin-type-boot {
   fill: var(--pin-boot-hover);
+}
+.pin-group:hover .pin-shape.pin-type-clock {
+  fill: var(--pin-clock-hover);
+}
+.pin-group:hover .pin-shape.pin-type-special {
+  fill: var(--pin-special-hover);
+}
+.pin-group:hover .pin-shape.pin-type-nc {
+  fill: var(--pin-nc-hover);
 }
 
 .chip-svg text {

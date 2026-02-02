@@ -10,12 +10,18 @@
   --pin-gnd: #ffd666;   /* Light Yellow (Same as Power) */
   --pin-reset: #ffe58f; /* Lighter Yellow/Orange */
   --pin-boot: #fffb8f;  /* Pale Yellow */
+  --pin-clock: #fffb8f; /* Pale Yellow */
+  --pin-special: #fffb8f; /* Default Special Yellow */
+  --pin-nc: #f0e68c;    /* Khaki for NC */
   
   /* Hover States for Special Pins (Lighter versions) */
   --pin-power-hover: #ffe58f;
   --pin-gnd-hover: #ffe58f;
   --pin-reset-hover: #fff1b8;
   --pin-boot-hover: #ffffb8;
+  --pin-clock-hover: #ffffb8;
+  --pin-special-hover: #ffffb8;
+  --pin-nc-hover: #fff9c4;
 }
 
 .dark-mode {
@@ -30,12 +36,18 @@
   --pin-gnd: #d4b106;   /* Darker Yellow */
   --pin-reset: #d48806; /* Darker Orange */
   --pin-boot: #d4b106;  /* Darker Yellow */
+  --pin-clock: #d4b106; /* Darker Yellow */
+  --pin-special: #d4b106; /* Default Special Yellow */
+  --pin-nc: #827717;    /* Olive for NC */
   
   /* Hover States - Dark Mode */
   --pin-power-hover: #ad8b00;
   --pin-gnd-hover: #ad8b00;
   --pin-reset-hover: #ad6800;
   --pin-boot-hover: #ad8b00;
+  --pin-clock-hover: #ad8b00;
+  --pin-special-hover: #ad8b00;
+  --pin-nc-hover: #9e9d24;
 }
 
 /* Conflict Rows Global Styles */

@@ -1,4 +1,5 @@
 import type { ChipDefinition, PinCapability, PackageInfo, PeripheralDefinition } from '@/types/chip'
+import { PIN_CATEGORIES, GPIO_REGEX, DEFAULT_SPECIAL_TYPE } from '@/config/pinConfig'
 
 // New Format Types (Internal use for inference)
 interface NewPeripheralMap {
@@ -147,7 +148,10 @@ export function inferChipData(raw: any): ChipDefinition {
     'gnd': 2,
     'reset': 3,
     'boot': 4,
-    'gpio': 5
+    'clock': 5,
+    'nc': 6,
+    [DEFAULT_SPECIAL_TYPE]: 7,
+    'gpio': 8
   }
 
   const sortedPinNames = Array.from(distinctPins).sort((a, b) => {
@@ -190,6 +194,13 @@ export function inferChipData(raw: any): ChipDefinition {
        if (functions.length === 0) functions.push('NRST')
     } else if (type === 'boot') {
        if (functions.length === 0) functions.push(pinName) // BOOT0
+    } else if (type === 'clock') {
+       if (functions.length === 0) functions.push(pinName)
+    } else if (type === 'nc') {
+       if (functions.length === 0) functions.push('NC')
+    } else {
+       // Special / Default
+       if (functions.length === 0) functions.push(pinName)
     }
     
     // Remove duplicates
@@ -212,11 +223,19 @@ export function inferChipData(raw: any): ChipDefinition {
 
 // Helper to determine pin type
 function getPinType(name: string): string {
-  if (name.startsWith('VDD') || name === 'VBAT') return 'power'
-  if (name.startsWith('VSS') || name === 'GND' || name === 'VSSA') return 'gnd'
-  if (name === 'NRST') return 'reset'
-  if (name.startsWith('BOOT')) return 'boot'
-  return 'gpio'
+  // 1. Check if it's a standard GPIO
+  if (GPIO_REGEX.test(name)) return 'gpio'
+  
+  // 2. Check specific categories from config
+  if (PIN_CATEGORIES.power.some(prefix => name.startsWith(prefix))) return 'power'
+  if (PIN_CATEGORIES.gnd.some(prefix => name.startsWith(prefix))) return 'gnd'
+  if (PIN_CATEGORIES.clock.some(prefix => name.startsWith(prefix))) return 'clock'
+  if (PIN_CATEGORIES.reset.some(prefix => name.startsWith(prefix))) return 'reset'
+  if (PIN_CATEGORIES.boot.some(prefix => name.startsWith(prefix))) return 'boot'
+  if (PIN_CATEGORIES.nc.some(prefix => name.startsWith(prefix))) return 'nc'
+
+  // 3. Default fallback for non-GPIO pins
+  return DEFAULT_SPECIAL_TYPE
 }
 
 // Helper to map Category to Type (simple heuristic)

@@ -2,11 +2,11 @@
   "meta": {
     "vendor": "WCH",
     "family": "CH32V203",
-    "name": "CH32V203C8T6",
+    "name": "CH32V203CXT6",
     "core": "RISC-V (QingKe V4B)",
     "package": "LQFP48",
-    "flash": "32K",
-    "sram": "10K",
+    "flash": "32/64K",
+    "sram": "10/20K",
     "datasheet": "https://item.szlcsc.com/datasheet/CH32V203C8T6/3483852.html"
   },
 

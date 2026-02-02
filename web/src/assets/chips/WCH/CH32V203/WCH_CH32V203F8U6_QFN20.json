@@ -1,0 +1,381 @@
+{
+  "meta": {
+    "vendor": "WCH",
+    "family": "CH32V203",
+    "name": "CH32V203F8U6",
+    "core": "RISC-V (QingKe V4B)",
+    "package": "QFN20",
+    "flash": "64K",
+    "sram": "20K",
+    "datasheet": "https://item.szlcsc.com/datasheet/CH32V203C8T6/3483852.html"
+  },
+
+
+   "package": {
+    "type": "LQFP20",
+    "pinCount": 20,
+    "pins": [
+      { "number": 0, "name": "GND" },
+      { "number": 1, "name": "PA0" },
+      { "number": 2, "name": "PA1" },
+      { "number": 3, "name": "PA2" },
+      { "number": 4, "name": "PA3" },
+      { "number": 5, "name": "PA4" },
+      { "number": 6, "name": "PA5" },
+      { "number": 7, "name": "PA7" },
+      { "number": 8, "name": "PB0" },
+      { "number": 9, "name": "PB1" },
+      { "number": 10, "name": "PB10" },
+      { "number": 11, "name": "PB11" },
+      { "number": 12, "name": "PB14" },
+      { "number": 13, "name": "PB15" },
+      { "number": 14, "name": "PA8" },
+      { "number": 15, "name": "PA9" },
+      { "number": 16, "name": "PA13" },
+      { "number": 17, "name": "PA14" },
+      { "number": 18, "name": "PA10" },
+      { "number": 19, "name": "VDD" },
+      { "number": 20, "name": "PA6" }
+    ]
+  },
+
+
+"peripherals": {
+  "SYS": {
+        "Description": "系统配置外设",
+        "":{
+          "pinmaps":[{
+            "SWDI0": "PA13",
+            "SWCLK": "PA14",
+            "WKUP": "PA0",
+            "BOOT1":"PB2",
+            "OSC_IN": "PD0",
+            "OSC_OUT": "PD1",
+            "OSC32_IN": "PC14",
+            "OSC32_OUT": "PC15",
+            "MCO": "PA8",
+            "TAMPER-RTC": "PC13"
+        }]
+        }
+  },
+  "ADC": {
+    "Description": "ADC",
+    "ADC": {
+      "pinmaps": [{
+        "IN0": "PA0",
+        "IN1": "PA1",
+        "IN2": "PA2",
+        "IN3": "PA3",
+        "IN4": "PA4",
+        "IN5": "PA5",
+        "IN6": "PA6",
+        "IN7": "PA7",
+        "IN8": "PB0",
+        "IN9": "PB1",
+        "IN10": "PC0",
+        "IN11": "PC1",
+        "IN12": "PC2",
+        "IN13": "PC3",
+        "IN14": "PC4",
+        "IN15": "PC5"
+      }]
+    }
+  },
+  "ADTM":{
+    "Description": "高级定时器(Advanced Digital Timer Module)",
+    "TIM1": {
+      "pinmaps": [
+        {
+          "CH1": "PA8",
+          "CH1N": "PB13",
+          "CH2": "PA9",
+          "CH2N": "PB14",
+          "CH3": "PA10",
+          "CH3N": "PB15",
+          "CH4": "PA11",
+          "ETR": "PA12",
+          "BKIN": "PB12"
+        },
+        {
+          "CH1": "PA8",
+          "CH1N": "PA7",
+          "CH2": "PA9",
+          "CH2N": "PB0",
+          "CH3": "PA10",
+          "CH3N": "PB1",
+          "CH4": "PA11",
+          "ETR": "PA12",
+          "BKIN": "PA6"
+        }
+      ]
+    }
+  },
+  "GPTM":{
+    "Description": "通用定时器(General-Purpose Timer Module)",
+    "TIM2": {
+      "pinmaps": [
+      {
+        "CH1": "PA0",
+        "CH2": "PA1",
+        "CH3": "PA2",
+        "CH4": "PA3",
+        "ETR": "PA0"
+      },
+      {
+        "CH1": "PA15",
+        "CH2": "PB3",
+        "CH3": "PA2",
+        "CH4": "PA3",
+        "ETR": "PA15"
+      },
+      {
+        "CH1": "PA0",
+        "CH2": "PA1",
+        "CH3": "PB10",
+        "CH4": "PB11",
+        "ETR": "PA0"
+      },
+     {
+        "CH1": "PA15",
+        "CH2": "PB3",
+        "CH3": "PB10",
+        "CH4": "PB11",
+        "ETR": "PA15"
+      }
+    ]
+    },
+  "TIM3": {
+      "pinmaps": [
+      {
+        "CH1": "PA6",
+        "CH2": "PA7",
+        "CH3": "PB0",
+        "CH4": "PB1",
+        "ETR": "PD2"
+      },
+      {
+        "CH1": "PA4",
+        "CH2": "PB5",
+        "CH3": "PA2",
+        "CH4": "PA3",
+        "ETR": "PD2"
+      },
+      {
+        "CH1": "PC6",
+        "CH2": "PC7",
+        "CH3": "PC8",
+        "CH4": "PC9",
+        "ETR": "PD2"
+      }
+    ]
+    },
+    "TIM4": {
+      "pinmaps": [
+      {
+        "CH1": "PB6",
+        "CH2": "PB7",
+        "CH3": "PB8",
+        "CH4": "PB9"
+      }
+    ]
+    }
+  },
+  "UART/USART":{
+    "Description": "通用异步收发器(Universal Asynchronous Receiver/Transmitter)",
+    "USART1": {
+      "pinmaps": [
+        {
+          "TX": "PA9",
+          "RX": "PA10",
+          "CK": "PA8",
+          "CTS": "PA11",
+          "RTS": "PA12"
+        },
+        {
+          "TX": "PB7",
+          "RX": "PA10",
+          "CK": "PB6",
+          "CTS": "PA11",
+          "RTS": "PA12"
+        }
+      ]
+    },
+    "USART2": {
+      "pinmaps": [
+        {
+          "TX": "PA2",
+          "RX": "PA3",
+          "CK": "PA4",
+          "CTS": "PA0",
+          "RTS": "PA1"
+        }
+      ]
+    },
+    "USART3": {
+      "pinmaps": [
+        {
+          "TX": "PB10",
+          "RX": "PB11",
+          "CK": "PB12",
+          "CTS": "PB13",
+          "RTS": "PB14"
+        },
+        {
+          "TX": "PC10",
+          "RX": "PC11",
+          "CK": "PC12",
+          "CTS": "PB13",
+          "RTS": "PB14"
+        }
+      ]
+    },
+    "USART4": {
+      "pinmaps": [
+        {
+          "TX": "PB0",
+          "RX": "PB1",
+          "CK": "PB2",
+          "CTS": "PB3",
+          "RTS": "PB4"
+        },
+        {
+          "TX": "PA5",
+          "RX": "PB5",
+          "CK": "PA6",
+          "CTS": "PA7",
+          "RTS": "PA15"
+        }
+      ]
+    }
+  },
+  "USB": {
+    "Description": "USB Device Controller",
+    "USB": {
+      "pinmaps": [
+        {
+          "DM": "PA11",
+          "DP": "PA12"
+        }
+      ]
+    },
+    "USBFS": {
+      "pinmaps": [
+        {
+          "DM": "PB6",
+          "DP": "PB7"
+        }
+      ]
+    }
+  },
+  "I2C": {
+    "Description": "I2C",
+    "I2C1": {
+      "pinmaps": [
+        {
+          "SCL": "PB6",
+          "SDA": "PB7",
+          "SMBA": "PB5"
+        },
+        {
+          "SCL": "PB8",
+          "SDA": "PB9",
+          "SMBA": "PB5"
+        }
+      ]
+    },
+    "I2C2": {
+      "pinmaps": [
+        {
+          "SCL": "PB10",
+          "SDA": "PB11",
+          "SMBA": "PB12"
+        }
+      ]
+    }
+  },
+  "SPI": {
+    "Description": "SPI",
+    "SPI1": {
+      "pinmaps": [
+        {
+          "NSS": "PA4",
+          "SCK": "PA5",
+          "MISO": "PA6",
+          "MOSI": "PA7"
+        },
+        {
+          "NSS": "PA15",
+          "SCK": "PB3",
+          "MISO": "PB4",
+          "MOSI": "PB5"
+        }
+      ]
+    },
+    "SPI2": {
+      "pinmaps": [
+        {
+          "NSS": "PB12",
+          "SCK": "PB13",
+          "MISO": "PB14",
+          "MOSI": "PB15"
+        }
+      ]
+    }
+  },
+  "ETH": {
+    "Description": "Ethernet",
+    "ETH": {
+      "pinmaps": [
+        {
+          "RXP": "PC6",
+          "PXN": "PC7",
+          "TXP": "PC8",
+          "TXN": "PC9"
+        }
+      ]
+    }
+ },
+  "OPA": {
+    "Description": "Operational Amplifier",
+    "OPA1": {
+      "pinmaps": [
+        {
+          "CH0N": "PB11",
+          "CH0P": "PB15",
+          "OUT0": "PA3",
+          "CH1N": "PA6",
+          "CH1P": "PB0",
+          "OUT1": "PB1"
+        }
+      ]
+    },
+    "OPA2": {
+      "pinmaps": [
+        {
+          "CH0N": "PB10",
+          "CH0P": "PB14",
+          "OUT0": "PA2",
+          "CH1N": "PA5",
+          "CH1P": "PA7",
+          "OUT1": "PA4"
+        }
+      ]
+    }
+    },
+    "CAN": {
+    "Description": "CAN",
+    "CAN1": {
+      "pinmaps": [
+        {
+          "RX": "PA11",
+          "TX": "PA12"
+        },
+        {
+          "RX": "PB8",
+          "TX": "PB9"
+        }
+      ]
+    }
+    }
+}
+}
