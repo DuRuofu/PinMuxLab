@@ -47,5 +47,8 @@ An open-source MCU pin & peripheral allocation visualizer
 
 - 芯片封装可视化：SVG
 
-  
+
+## 具体实现
+
+[](./docs/技术实现文档.md)
 
