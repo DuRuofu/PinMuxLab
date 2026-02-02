@@ -28,7 +28,7 @@ watch(selectedMapIndex, (newVal, oldVal) => {
   for (const [signal, pin] of Object.entries(oldMap)) {
     // 3. Check if the pin is currently assigned to THIS peripheral/signal
     // We use isPinSelected logic: if the pin's current function matches what this signal expects
-    if (isPinSelected(pin, signal)) {
+    if (isPinSelected(pin, signal, oldVal)) {
       // 4. Unassign the pin
       chipStore.setPinFunction(pin, '') // or setPinConfiguration(pin, null)
     }
@@ -48,7 +48,7 @@ function detectInitialMap() {
   props.definition.pinmaps.forEach((map, index) => {
     let matches = 0
     for (const [signal, pin] of Object.entries(map)) {
-      if (isPinSelected(pin, signal)) {
+      if (isPinSelected(pin, signal, index)) {
         matches++
       }
     }
@@ -106,11 +106,18 @@ const signals = computed(() => {
   }))
 })
 
-function getTargetFunction(pinName: string, signal: string): string | undefined {
+function getTargetFunction(pinName: string, signal: string, mapIndex: number = selectedMapIndex.value): string | undefined {
   const functions = chipStore.getPinFunctions(pinName)
-  if (functions.includes(signal)) return signal
-  const composite = `${props.name}_${signal}`
+  const suffix = mapIndex === 0 ? '' : `_${mapIndex}`
+
+  // Try exact signal name match (with suffix)
+  const direct = `${signal}${suffix}`
+  if (functions.includes(direct)) return direct
+
+  // Try composite name match (Peripheral_Signal + suffix)
+  const composite = `${props.name}_${signal}${suffix}`
   if (functions.includes(composite)) return composite
+  
   return undefined
 }
 
@@ -123,7 +130,7 @@ const cardStatus = computed(() => {
   // Check if configured (GREEN) - Prioritize explicit user selection
   const hasSelection = signals.value.some(s => {
     // Check if any option for this signal is currently selected
-    return s.options.some(opt => isPinSelected(opt.pinName, s.name))
+    return s.options.some(opt => isPinSelected(opt.pinName, s.name, opt.schemeIndex))
   })
 
   // Check for conflicts/constraints (YELLOW)
@@ -132,7 +139,7 @@ const cardStatus = computed(() => {
   // 2. But some options are occupied by others
   const hasInterference = signals.value.some(s => {
     // If a signal has ANY option occupied by another peripheral, it's a conflict/warning
-    return s.options.some(opt => isPinOccupied(opt.pinName, s.name))
+    return s.options.some(opt => isPinOccupied(opt.pinName, s.name, opt.schemeIndex))
   })
 
   // User Logic:
@@ -163,24 +170,24 @@ const statusIcon = computed(() => {
 })
 
 // Check if a specific pin is currently selected for this signal
-function isPinSelected(pinName: string, signal: string): boolean {
+function isPinSelected(pinName: string, signal: string, mapIndex: number = selectedMapIndex.value): boolean {
   const currentFunc = chipStore.getPinConfiguration(pinName)
-  const targetFunc = getTargetFunction(pinName, signal)
+  const targetFunc = getTargetFunction(pinName, signal, mapIndex)
   return currentFunc === targetFunc
 }
 
 // Check if any pin is selected for this signal (for dropdown value)
 function getSelectedPinForSignal(signal: string, options: SignalOption[]): string {
   for (const opt of options) {
-    if (isPinSelected(opt.pinName, signal)) return opt.pinName
+    if (isPinSelected(opt.pinName, signal, opt.schemeIndex)) return opt.pinName
   }
   return ''
 }
 
 // Check availability (occupied by others)
-function isPinOccupied(pinName: string, signal: string): boolean {
+function isPinOccupied(pinName: string, signal: string, mapIndex: number = selectedMapIndex.value): boolean {
   const currentFunc = chipStore.getPinConfiguration(pinName)
-  const targetFunc = getTargetFunction(pinName, signal)
+  const targetFunc = getTargetFunction(pinName, signal, mapIndex)
   // Occupied if it has a function AND it is NOT the target function
   return !!currentFunc && currentFunc !== targetFunc
 }
@@ -188,7 +195,7 @@ function isPinOccupied(pinName: string, signal: string): boolean {
 // Check if ALL options for a signal are occupied (conflict state)
 function isSignalFullyOccupied(signal: { name: string, options: SignalOption[] }): boolean {
   if (signal.options.length === 0) return true
-  return signal.options.every(opt => isPinOccupied(opt.pinName, signal.name))
+  return signal.options.every(opt => isPinOccupied(opt.pinName, signal.name, opt.schemeIndex))
 }
 
 function onCheckboxChange(signal: string, pinName: string, event: Event) {

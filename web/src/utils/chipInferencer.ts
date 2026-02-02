@@ -97,19 +97,21 @@ export function inferChipData(raw: any): ChipDefinition {
       const pinmaps = Array.isArray(subData) ? subData : (subData?.pinmaps || [])
 
       if (pinmaps.length > 0) {
-        pinmaps.forEach((pinmap: any) => {
+        pinmaps.forEach((pinmap: any, index: number) => {
           for (const signalName in pinmap) {
             const pinName = pinmap[signalName]
             
             // 1. Add to Pin Functions
             let funcName = ''
+            const suffix = index === 0 ? '' : `_${index}`
+
             // If subKey is empty string (e.g. in SYS), use signalName directly?
             // In JSON example: "SYS": { "": [ ... ] }
             
             if (subKey === '' || subKey === 'default') {
-               funcName = signalName
+               funcName = `${signalName}${suffix}`
             } else {
-               funcName = `${subKey}_${signalName}`
+               funcName = `${subKey}_${signalName}${suffix}`
             }
             
             addFunction(pinName, funcName)

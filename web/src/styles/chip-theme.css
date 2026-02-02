@@ -8,14 +8,14 @@
   /* Special Function Pins */
   --pin-power: #ffd666; /* Light Yellow */
   --pin-gnd: #ffd666;   /* Light Yellow (Same as Power) */
-  --pin-reset: #faad14; /* Orange/Yellow */
-  --pin-boot: #722ed1;  /* Purple */
+  --pin-reset: #ffe58f; /* Lighter Yellow/Orange */
+  --pin-boot: #fffb8f;  /* Pale Yellow */
   
   /* Hover States for Special Pins (Lighter versions) */
   --pin-power-hover: #ffe58f;
   --pin-gnd-hover: #ffe58f;
-  --pin-reset-hover: #ffc53d;
-  --pin-boot-hover: #9254de;
+  --pin-reset-hover: #fff1b8;
+  --pin-boot-hover: #ffffb8;
 }
 
 .dark-mode {
@@ -29,13 +29,13 @@
   --pin-power: #d4b106; /* Darker Yellow */
   --pin-gnd: #d4b106;   /* Darker Yellow */
   --pin-reset: #d48806; /* Darker Orange */
-  --pin-boot: #531dab;  /* Darker Purple */
+  --pin-boot: #d4b106;  /* Darker Yellow */
   
   /* Hover States - Dark Mode */
   --pin-power-hover: #ad8b00;
   --pin-gnd-hover: #ad8b00;
   --pin-reset-hover: #ad6800;
-  --pin-boot-hover: #391085;
+  --pin-boot-hover: #ad8b00;
 }
 
 /* Conflict Rows Global Styles */
