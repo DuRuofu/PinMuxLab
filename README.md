@@ -1,54 +1,138 @@
-# **PinMuxLab** 
+# PinMuxLab
 
-An open-source MCU pin & peripheral allocation visualizer
+> An open-source MCU pin & peripheral allocation visualizer
 
-**核心目标：** 为无专用可视化配置工具的 MCU（如沁恒等）提供网页版引脚管理界面，解决引脚复用查询难、分配易冲突的问题。
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub stars](https://img.shields.io/github/stars/duruofu/PinMuxLab)](https://github.com/duruofu/PinMuxLab/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/duruofu/PinMuxLab)](https://github.com/duruofu/PinMuxLab/issues)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/duruofu/PinMuxLab)](https://github.com/duruofu/PinMuxLab/releases)
 
-## 预览:
+[English](./README.md) | [中文](./README_ZH.md)
 
-[https://duruofu.github.io/PinMuxLab](https://duruofu.github.io/PinMuxLab)
+English README is work in progress. See [README_ZH.md](./README_ZH.md) for Chinese version.
 
-![image-20260128150224097](attachments/image-20260128150224097.png)
+---
 
-## 需求：
+PinMuxLab is a web-based tool designed to help embedded engineers visualize and manage MCU pin assignments. It provides an interactive chip package diagram with peripheral mapping views, making pin multiplexing configuration intuitive and error-free.
 
-参考：[基础需求分析](./docs/基础需求,md)
+## Features
 
-## 架构:
+- **Interactive SVG Visualization** - Dynamically rendered chip package diagrams (LQFP, QFN, TSSOP, etc.)
+- **Peripheral Mapping** - View all available pin mappings for peripherals like UART, SPI, I2C, ADC
+- **Remap Support** - Easily switch between default and alternate pin configurations
+- **Auto-Inference** - Automatically infer pin types (power, GND, reset, boot, GPIO) from pin names
+- **Chip Database** - JSON-based chip definition, easy to add new chips
+- **Offline Support** - Works entirely in browser, no server required
 
-```txt
+## Quick Start
+
+### Online Demo
+
+Try it now: [https://duruofu.github.io/PinMuxLab](https://duruofu.github.io/PinMuxLab)
+
+### Local Development
+
+```bash
+# Clone the repository
+git clone https://github.com/duruofu/PinMuxLab.git
+cd PinMuxLab/web
+
+# Install dependencies
+pnpm install
+
+# Start dev server
+pnpm dev
+```
+
+Visit `http://localhost:5173` after starting.
+
+### Build for Production
+
+```bash
+pnpm build
+```
+
+Output will be in `dist/` directory.
+
+## Supported Chips
+
+Currently supported chip series:
+
+| Vendor | Family | Package |
+|--------|--------|---------|
+| WCH (沁恒) | CH32V003 | SOP16, TSSOP20, QFN20 |
+| WCH (沁恒) | CH32V203 | QFN20, TSSOP20, QSOP28, LQFP48, LQFP64 |
+| WCH (沁恒) | CH32V208 | QFN68 |
+| WCH (沁恒) | CH32V303 | LQFP64 |
+
+> Want to add a new chip? See [芯片JSON数据定义](./docs/芯片JSON数据定义.md) for the data format specification.
+
+## Architecture
+
+```
 ┌─────────────┐
-│ 芯片描述数据 │  ← JSON
+│  Chip JSON  │  ← Chip definition file
 └─────┬───────┘
       │
 ┌─────▼────────────────────┐
-│   Pin / Peripheral Model  │  ← 核心抽象层
+│   Pin / Peripheral Model  │  ← Core abstraction layer
 └─────┬────────────────────┘
       │
 ┌─────▼───────────┐
-│  Vue 状态管理    │  (Pinia)
+│   Pinia Store   │  ← State management
 └─────┬───────────┘
       │
 ┌─────▼────────────────────┐
-│  可视化层 (SVG) │
+│   SVG Visualization       │  ← Interactive UI
 └──────────────────────────┘
-
 ```
 
-## 芯片数据库文件设计：
+## Project Structure
 
-参考：[芯片JSON数据定义](./docs/芯片JSON数据定义.md)
+```
+PinMuxLab/
+├── web/                    # Frontend Vue 3 project
+│   ├── src/
+│   │   ├── assets/chips/   # Chip JSON data files
+│   │   ├── components/    # Vue components
+│   │   │   └── ChipPackage.vue   # Core: SVG chip package renderer
+│   │   ├── stores/         # Pinia stores
+│   │   │   └── chipStore.ts      # Chip data management
+│   │   ├── types/chip.ts   # TypeScript type definitions
+│   │   ├── utils/
+│   │   │   ├── packageLayout.ts   # Package layout algorithm
+│   │   │   └── chipInferencer.ts  # Pin inference logic
+│   │   └── view/
+│   │       └── PinMuxEditor.vue    # Main editor view
+│   └── package.json
+├── docs/                   # Documentation
+│   ├── 芯片JSON数据定义.md  # Chip data format spec
+│   └── 技术实现文档.md       # Technical implementation doc
+└── test/                   # Test files
+```
 
-## 技术栈：
+## Documentation
 
-- 前端框架：Vue 3
+- [Chip JSON Data Format](./docs/芯片JSON数据定义.md) - Specification for chip definition files
+- [Technical Implementation](./docs/技术实现文档.md) - Internal implementation details
+- [Basic Requirements](./docs/基础需求.md) - Project requirements analysis
 
-- 状态管理：Pinia
+## Tech Stack
 
-- 芯片封装可视化：SVG
+- **Framework**: Vue 3 (Composition API)
+- **Language**: TypeScript
+- **State Management**: Pinia
+- **Build Tool**: Vite
+- **Visualization**: SVG
 
+## Contributing
 
-## 具体实现
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-[](./docs/技术实现文档.md)
+## License
 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+If this project helps you, please consider giving it a ⭐
