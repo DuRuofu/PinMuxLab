@@ -8,22 +8,56 @@ import IconMoon from '@/components/icons/IconMoon.vue'
 import type { RenderedPin } from '@/utils/packageLayout'
 import { exportConfigurationToCSV } from '@/utils/exportUtils'
 
-// 导入芯片数据 (Vite Glob Import) - Load from nested structure
-const chipModules = import.meta.glob('@/assets/chips/**/*.json', { eager: true })
-const allChips = Object.values(chipModules).map((mod: any) => mod.default || mod)
+// --- 芯片数据懒加载 ---
 
-// Group chips by Vendor -> Family
+// 动态导入：每个 value 是 () => Promise<module>
+const chipModules = import.meta.glob('@/assets/chips/**/*.json')
+
+// 完整芯片数据缓存：path -> full JSON
+const chipDataCache = new Map<string, any>()
+
+// 菜单条目（仅元数据）
+interface ChipEntry { path: string; vendor: string; family: string; name: string; package: string }
+
+const allChipEntries = ref<ChipEntry[]>([])
+const isLoadingChips = ref(true)
+
+// 异步加载所有芯片元数据，构建菜单
+async function loadAllChipEntries() {
+  const entries: ChipEntry[] = []
+  // 并行加载所有 JSON 文件（每个是独立 chunk）
+  await Promise.all(Object.entries(chipModules).map(async ([path, loader]) => {
+    try {
+      const mod: any = await loader()
+      const data = mod.default || mod
+      chipDataCache.set(path, data)
+      entries.push({
+        path,
+        vendor: data.meta?.vendor || 'Unknown',
+        family: data.meta?.family || 'Unknown',
+        name: data.meta?.name || path,
+        package: data.meta?.package || 'Unknown',
+      })
+    } catch (e) {
+      console.error(`Failed to load chip: ${path}`, e)
+    }
+  }))
+  allChipEntries.value = entries
+  isLoadingChips.value = false
+}
+
+// 根据菜单条目获取完整数据
+function getChipData(entry: ChipEntry) {
+  return chipDataCache.get(entry.path)
+}
+
+// 按 Vendor -> Family 分组
 const menuStructure = computed(() => {
-  const struct: Record<string, Record<string, any[]>> = {}
-  
-  for (const chip of allChips) {
-    const vendor = chip.meta.vendor || 'Unknown'
-    const family = chip.meta.family || 'Unknown'
-    
-    if (!struct[vendor]) struct[vendor] = {}
-    if (!struct[vendor][family]) struct[vendor][family] = []
-    
-    struct[vendor][family].push(chip)
+  const struct: Record<string, Record<string, ChipEntry[]>> = {}
+  for (const entry of allChipEntries.value) {
+    if (!struct[entry.vendor]) struct[entry.vendor] = {}
+    if (!struct[entry.vendor][entry.family]) struct[entry.vendor][entry.family] = []
+    struct[entry.vendor][entry.family].push(entry)
   }
   return struct
 })
@@ -44,7 +78,7 @@ const chipOptions = computed(() => {
   const vendorData = menuStructure.value[selectedVendor.value]
   if (!vendorData) return []
   const chips = vendorData[selectedFamily.value] || []
-  return chips.sort((a: any, b: any) => a.meta.name.localeCompare(b.meta.name))
+  return chips.sort((a, b) => a.name.localeCompare(b.name))
 })
 
 const chipStore = useChipStore()
@@ -87,13 +121,16 @@ function updateTheme() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   // Initialize Theme
   const savedTheme = localStorage.getItem('theme')
   if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     isDarkMode.value = true
   }
   updateTheme()
+
+  // 异步加载所有芯片元数据
+  await loadAllChipEntries()
 
   // 尝试恢复上次选择的芯片
   const lastSelection = localStorage.getItem('pinmux_last_selection')
@@ -102,17 +139,19 @@ onMounted(() => {
   if (lastSelection) {
     try {
       const { vendor, family, chipName } = JSON.parse(lastSelection)
-      // 验证数据有效性
       if (vendor && family && chipName && menuStructure.value[vendor]?.[family]) {
-        const chips = menuStructure.value[vendor][family]
-        const chip = chips.find((c: any) => c.meta.name === chipName)
-        
-        if (chip) {
-          console.log('Restoring Last Chip...', chip)
-          selectedVendor.value = vendor
-          selectedFamily.value = family
-          chipStore.loadChip(chip)
-          loaded = true
+        const entries = menuStructure.value[vendor][family]
+        const entry = entries.find((e) => e.name === chipName)
+
+        if (entry) {
+          const chipData = getChipData(entry)
+          if (chipData) {
+            console.log('Restoring Last Chip...', chipData)
+            selectedVendor.value = vendor
+            selectedFamily.value = family
+            chipStore.loadChip(chipData)
+            loaded = true
+          }
         }
       }
     } catch (e) {
@@ -123,19 +162,22 @@ onMounted(() => {
   // 如果没有恢复成功，则加载默认第一个可用的芯片
   if (!loaded && vendorOptions.value.length > 0) {
     selectedVendor.value = vendorOptions.value[0] || ''
-    
+
     const families = familyOptions.value
     if (families.length > 0) {
       selectedFamily.value = families[0] || ''
-      
-      const chips = chipOptions.value
-      if (chips.length > 0) {
-        console.log('Loading Default Chip...', chips[0])
-        chipStore.loadChip(chips[0])
+
+      const entries = chipOptions.value
+      if (entries.length > 0) {
+        const chipData = getChipData(entries[0])
+        if (chipData) {
+          console.log('Loading Default Chip...', chipData)
+          chipStore.loadChip(chipData)
+        }
       }
     }
   }
-  
+
   // Close context menu on global click
   window.addEventListener('click', () => {
     showContextMenu.value = false
@@ -174,22 +216,27 @@ function onVendorChange() {
 
 function onFamilyChange() {
   // When family changes, select first chip
-  const chips = chipOptions.value
-  if (chips.length > 0) {
-    chipStore.loadChip(chips[0])
-    resetSelection()
+  const entries = chipOptions.value
+  if (entries.length > 0) {
+    const chipData = getChipData(entries[0])
+    if (chipData) {
+      chipStore.loadChip(chipData)
+      resetSelection()
+    }
   }
 }
 
 function onChipSelect(event: Event) {
   const select = event.target as HTMLSelectElement
   const chipName = select.value
-  // Find chip in current vendor/family list
-  const chipData = chipOptions.value.find((c: any) => c.meta.name === chipName)
-  
-  if (chipData) {
-    chipStore.loadChip(chipData)
-    resetSelection()
+  const entry = chipOptions.value.find((e) => e.name === chipName)
+
+  if (entry) {
+    const chipData = getChipData(entry)
+    if (chipData) {
+      chipStore.loadChip(chipData)
+      resetSelection()
+    }
   }
 }
 
@@ -286,8 +333,8 @@ const isSelectedPinFixed = computed(() => {
           :value="chipStore.currentChip?.meta.name"
           @change="onChipSelect"
         >
-          <option v-for="chip in chipOptions" :key="chip.meta.name" :value="chip.meta.name">
-            {{ chip.meta.name }} ({{ chip.meta.package }})
+          <option v-for="chip in chipOptions" :key="chip.name" :value="chip.name">
+            {{ chip.name }} ({{ chip.package }})
           </option>
         </select>
 

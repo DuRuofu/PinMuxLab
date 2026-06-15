@@ -38,6 +38,38 @@ function getPinTypeClass(pinName: string): string {
   return `pin-type-${cap.type}`
 }
 
+// --- 引脚悬停提示 (Tooltip) ---
+const tooltipPin = ref<RenderedPin | null>(null)
+const tooltipX = ref(0)
+const tooltipY = ref(0)
+const tooltipVisible = ref(false)
+
+function getPinTooltipFunctions(pinName: string): string[] {
+  return props.pinCapabilities?.[pinName]?.functions || []
+}
+
+function onPinMouseEnter(pin: RenderedPin, e: MouseEvent) {
+  tooltipPin.value = pin
+  tooltipVisible.value = true
+  updateTooltipPos(e)
+}
+
+function onPinMouseMove(e: MouseEvent) {
+  if (tooltipVisible.value) updateTooltipPos(e)
+}
+
+function onPinMouseLeave() {
+  tooltipVisible.value = false
+  tooltipPin.value = null
+}
+
+function updateTooltipPos(e: MouseEvent) {
+  if (!containerRef.value) return
+  const rect = containerRef.value.getBoundingClientRect()
+  tooltipX.value = e.clientX - rect.left + 14
+  tooltipY.value = e.clientY - rect.top - 8
+}
+
 // 缩放控制
 const scale = ref(1)
 const isDragging = ref(false)
@@ -239,12 +271,15 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
       </g>
 
       <!-- 引脚 -->
-      <g 
-        v-for="pin in layout.pins" 
-        :key="pin.number" 
-        class="pin-group" 
+      <g
+        v-for="pin in layout.pins"
+        :key="pin.number"
+        class="pin-group"
         @click.stop="handlePinClick(pin)"
         @contextmenu.prevent.stop="handlePinRightClick(pin, $event)"
+        @mouseenter="onPinMouseEnter(pin, $event)"
+        @mousemove="onPinMouseMove($event)"
+        @mouseleave="onPinMouseLeave"
         :class="{ 'is-fixed-pin': isPinFixed(pin.name) }"
       >
         <!-- 引脚形状 -->
@@ -288,6 +323,26 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
         </text>
       </g>
     </svg>
+
+    <!-- 引脚悬停提示 -->
+    <Transition name="tooltip-fade">
+      <div
+        v-if="tooltipVisible && tooltipPin"
+        class="pin-tooltip"
+        :style="{ left: `${tooltipX}px`, top: `${tooltipY}px` }"
+      >
+        <div class="tooltip-pin-name">{{ tooltipPin.name }}</div>
+        <div class="tooltip-pin-type">{{ getPinTypeClass(tooltipPin.name).replace('pin-type-', '') }}</div>
+        <div v-if="getPinTooltipFunctions(tooltipPin.name).length > 0" class="tooltip-functions">
+          <span
+            v-for="func in getPinTooltipFunctions(tooltipPin.name)"
+            :key="func"
+            class="tooltip-func-tag"
+          >{{ func }}</span>
+        </div>
+        <div v-else class="tooltip-no-func">No functions</div>
+      </div>
+    </Transition>
 
     <!-- 缩放控件 -->
     <div class="zoom-controls">
@@ -530,5 +585,69 @@ function handlePinRightClick(pin: RenderedPin, event: MouseEvent) {
   stroke-width: 3px;
   stroke-linejoin: round;
   pointer-events: none;
+}
+
+/* -- 引脚悬停提示 (Tooltip) -- */
+.pin-tooltip {
+  position: absolute;
+  z-index: 100;
+  pointer-events: none;
+  background: var(--bg-primary, #fff);
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  padding: 8px 10px;
+  min-width: 120px;
+  max-width: 220px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  font-size: 0.8rem;
+  transform: translate(0, -100%);
+}
+
+.tooltip-pin-name {
+  font-weight: 700;
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: var(--text-primary, #333);
+  margin-bottom: 2px;
+}
+
+.tooltip-pin-type {
+  font-size: 0.7rem;
+  color: var(--text-secondary, #888);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.tooltip-functions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.tooltip-func-tag {
+  display: inline-block;
+  background: var(--active-bg, #e6f4ea);
+  color: var(--primary-color, #42b883);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-family: monospace;
+  white-space: nowrap;
+}
+
+.tooltip-no-func {
+  color: var(--text-secondary, #888);
+  font-style: italic;
+  font-size: 0.75rem;
+}
+
+/* Tooltip fade transition */
+.tooltip-fade-enter-active,
+.tooltip-fade-leave-active {
+  transition: opacity 0.12s ease;
+}
+.tooltip-fade-enter-from,
+.tooltip-fade-leave-to {
+  opacity: 0;
 }
 </style>
