@@ -14,6 +14,20 @@ interface NewPeripheralMap {
  * If data is already in Old Format (has complete pins and flat peripherals), returns it as is.
  */
 export function inferChipData(raw: any): ChipDefinition {
+  // 0. Validate required top-level structure
+  if (!raw || typeof raw !== 'object') {
+    throw new Error('Invalid chip data: expected an object')
+  }
+  if (!raw.meta || typeof raw.meta !== 'object') {
+    throw new Error('Invalid chip data: missing or invalid "meta" field')
+  }
+  if (!raw.package || typeof raw.package !== 'object') {
+    throw new Error('Invalid chip data: missing or invalid "package" field')
+  }
+  if (!Array.isArray(raw.package.pins)) {
+    throw new Error('Invalid chip data: "package.pins" must be an array')
+  }
+
   // 1. Determine Format based on Peripherals structure
   // Old/Flat Format: Peripherals are flat objects with 'pinmaps' or 'signals' directly.
   // New/Nested Format: Peripherals are grouped by Category (e.g. ADTM -> TIM1). Values have 'Description' or sub-objects.

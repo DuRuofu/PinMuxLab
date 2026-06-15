@@ -15,7 +15,13 @@ export const useChipStore = defineStore('chip', () => {
 
   // Actions
   function loadChip(rawData: any) {
-    const data = inferChipData(rawData)
+    let data: ChipDefinition
+    try {
+      data = inferChipData(rawData)
+    } catch (e) {
+      console.error('Failed to infer chip data:', e)
+      return
+    }
     currentChip.value = data
     selectedPinName.value = null // Reset selection on chip load
     // 尝试从 localStorage 加载配置
@@ -23,7 +29,21 @@ export const useChipStore = defineStore('chip', () => {
     const savedConfig = localStorage.getItem(storageKey)
     if (savedConfig) {
       try {
-        pinConfigurations.value = JSON.parse(savedConfig)
+        const parsed = JSON.parse(savedConfig)
+        // 校验每个已保存的函数名在当前芯片定义中仍然有效
+        const validated: Record<string, string> = {}
+        for (const [pinName, funcName] of Object.entries(parsed)) {
+          if (
+            typeof funcName === 'string' &&
+            funcName.length > 0 &&
+            data.pins[pinName]?.functions.includes(funcName)
+          ) {
+            validated[pinName] = funcName
+          } else {
+            console.warn(`Dropping stale config: ${pinName} -> ${funcName} (function no longer available)`)
+          }
+        }
+        pinConfigurations.value = validated
       } catch (e) {
         console.error('Failed to parse saved configuration', e)
         pinConfigurations.value = {}
@@ -36,7 +56,11 @@ export const useChipStore = defineStore('chip', () => {
   function saveConfigurations() {
     if (!currentChip.value) return
     const storageKey = `pinmux_config_${currentChip.value.meta.name}`
-    localStorage.setItem(storageKey, JSON.stringify(pinConfigurations.value))
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(pinConfigurations.value))
+    } catch (e) {
+      console.error('Failed to save configuration (storage may be full):', e)
+    }
   }
 
   function clearConfigurations() {
