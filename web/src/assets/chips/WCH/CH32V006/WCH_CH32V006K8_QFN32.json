@@ -1,0 +1,125 @@
+{
+  "meta": {
+    "vendor": "WCH",
+    "family": "CH32V006",
+    "name": "CH32V006K8",
+    "core": "RISC-V (QingKe V2A)",
+    "package": "QFN32",
+    "flash": "32K",
+    "sram": "4K",
+    "datasheet": "https://www.wch.cn/products/CH32V006.html"
+  },
+  "package": {
+    "type": "QFN32",
+    "pinCount": 32,
+    "pins": [
+      { "number": 0,  "name": "VSS" },
+      { "number": 1,  "name": "PB0" },
+      { "number": 2,  "name": "PB1" },
+      { "number": 3,  "name": "PB2" },
+      { "number": 4,  "name": "PB3" },
+      { "number": 5,  "name": "PB4" },
+      { "number": 6,  "name": "PB5" },
+      { "number": 7,  "name": "PB6" },
+      { "number": 8,  "name": "VDD" },
+      { "number": 9,  "name": "VSS" },
+      { "number": 10, "name": "PA0" },
+      { "number": 11, "name": "PA1" },
+      { "number": 12, "name": "PA2" },
+      { "number": 13, "name": "PA3" },
+      { "number": 14, "name": "PA4" },
+      { "number": 15, "name": "PA5" },
+      { "number": 16, "name": "PA6" },
+      { "number": 17, "name": "PA7" },
+      { "number": 18, "name": "VDD" },
+      { "number": 19, "name": "PC0" },
+      { "number": 20, "name": "PC1" },
+      { "number": 21, "name": "PC2" },
+      { "number": 22, "name": "PC3" },
+      { "number": 23, "name": "PC4" },
+      { "number": 24, "name": "PC5" },
+      { "number": 25, "name": "PC6" },
+      { "number": 26, "name": "PC7" },
+      { "number": 27, "name": "PD0" },
+      { "number": 28, "name": "PD7" },
+      { "number": 29, "name": "PD1" },
+      { "number": 30, "name": "PD5" },
+      { "number": 31, "name": "PD6" }
+    ]
+  },
+  "peripherals": {
+    "ADC": {
+      "Description": "ADC",
+      "ADC1": {
+        "pinmaps": [{
+          "IN0": "PA2",
+          "IN1": "PA1",
+          "IN2": "PC4",
+          "IN3": "PD2",
+          "IN4": "PD3",
+          "IN5": "PD5",
+          "IN6": "PD6",
+          "IN7": "PD4"
+        }]
+      }
+    },
+    "I2C": {
+      "Description": "I2C",
+      "I2C1": {
+        "pinmaps": [{
+          "SDA": "PC1",
+          "SCL": "PC2"
+        }]
+      }
+    },
+    "ADTM": {
+      "Description": "高级定时器 (Advanced Timer)",
+      "TIM1": {
+        "pinmaps": [{
+          "CH1": "PD2",
+          "CH1N": "PD0",
+          "CH2": "PA1",
+          "CH2N": "PA2",
+          "CH3": "PC3",
+          "CH3N": "PD1",
+          "CH4": "PC4"
+        }]
+      }
+    },
+    "GPTM": {
+      "Description": "通用定时器 (General-Purpose Timer)",
+      "TIM2": {
+        "pinmaps": [{
+          "CH1": "PD4",
+          "CH2": "PD3",
+          "CH3": "PC0",
+          "CH4": "PD7"
+        }]
+      }
+    },
+    "UART/USART": {
+      "Description": "通用异步收发器",
+      "USART1": {
+        "pinmaps": [
+          {
+            "TX": "PD5",
+            "RX": "PD6",
+            "CTS": "PD3",
+            "RTS": "PC2"
+          }
+        ]
+      }
+    },
+    "SPI": {
+      "Description": "SPI",
+      "SPI1": {
+        "pinmaps": [{
+          "NSS": "PC1",
+          "SCK": "PC5",
+          "MISO": "PC7",
+          "MOSI": "PC6"
+        }]
+      }
+    }
+  }
+}

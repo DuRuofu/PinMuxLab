@@ -559,7 +559,7 @@
         },
         {
           "TX": "PA14",
-          "RX": "PPA15"
+          "RX": "PA15"
         },
         {
           "TX": "PE14",
@@ -711,8 +711,8 @@
     }
  },
   "FSMC": {
-    "Description": "Ethernet",
-    "ETH": {
+    "Description": "FSMC (Flexible Static Memory Controller)",
+    "FSMC": {
       "pinmaps": [
         {
           "NADV": "PB7",
