@@ -82,19 +82,23 @@ export function calculateQuadLayout(pkg: PackageInfo): PackageLayout {
       width: bodySize,
       height: bodySize
     },
-    // Pin 1 标识位于左上角
+    // Pin 1 标识位于左下角
     pin1Mark: {
       cx: bodyStart + 15,
-      cy: bodyStart + 15,
+      cy: bodyStart + bodySize - 15,
       r: 4
     },
     pins: []
   }
 
+  // 过滤中心焊盘（引脚编号 0，通常为 GND 散热焊盘，不参与侧边排列）
+  const sidePins = pins.filter(p => p.number !== 0)
+
   // 辅助函数：计算引脚坐标
-  pins.forEach((pin, index) => {
-    // 确定当前引脚在哪一边 (0: Left, 1: Bottom, 2: Right, 3: Top)
-    const sideIndex = Math.floor(index / pinsPerSide) % 4
+  // 引脚 1 位于底边左端，逆时针排列：
+  // 0: Bottom (Left to Right), 1: Right (Bottom to Top), 2: Top (Right to Left), 3: Left (Top to Bottom)
+  sidePins.forEach((pin, index) => {
+    const sideIndex = (Math.floor(index / pinsPerSide) + 1) % 4
     const indexInSide = index % pinsPerSide
     
     let x = 0, y = 0, w = 0, h = 0

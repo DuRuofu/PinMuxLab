@@ -4,6 +4,7 @@
 
 - [ ] **CH32V006K8** — QFN32 物理引脚编号是估计的，必须对照手册修改 `package.pins`
 - [ ] **CH32V307VCT6** — LQFP100 物理引脚编号是估计的，必须对照手册修改 `package.pins`
+- [ ] **CH582M QFN48** — `meta` 和 `package.pins` 需对照手册校验（flash/sram/datasheet/引脚顺序）
 - [ ] **CH32V303 ETH** — `pinmaps: [{}]` 空的，需要填 RMII 引脚映射
 - [ ] **CH32V307 ETH** — 同上，`pinmaps: [{}]` 空的
 
