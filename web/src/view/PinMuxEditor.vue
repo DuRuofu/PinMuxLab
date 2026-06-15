@@ -55,9 +55,11 @@ function getChipData(entry: ChipEntry) {
 const menuStructure = computed(() => {
   const struct: Record<string, Record<string, ChipEntry[]>> = {}
   for (const entry of allChipEntries.value) {
-    if (!struct[entry.vendor]) struct[entry.vendor] = {}
-    if (!struct[entry.vendor][entry.family]) struct[entry.vendor][entry.family] = []
-    struct[entry.vendor][entry.family].push(entry)
+    const v = entry.vendor
+    const f = entry.family
+    if (!struct[v]) struct[v] = {}
+    if (!struct[v][f]) struct[v][f] = []
+    struct[v][f].push(entry)
   }
   return struct
 })
@@ -168,8 +170,9 @@ onMounted(async () => {
       selectedFamily.value = families[0] || ''
 
       const entries = chipOptions.value
-      if (entries.length > 0) {
-        const chipData = getChipData(entries[0])
+      const first = entries[0]
+      if (first) {
+        const chipData = getChipData(first)
         if (chipData) {
           console.log('Loading Default Chip...', chipData)
           chipStore.loadChip(chipData)
@@ -216,9 +219,9 @@ function onVendorChange() {
 
 function onFamilyChange() {
   // When family changes, select first chip
-  const entries = chipOptions.value
-  if (entries.length > 0) {
-    const chipData = getChipData(entries[0])
+  const first = chipOptions.value[0]
+  if (first) {
+    const chipData = getChipData(first)
     if (chipData) {
       chipStore.loadChip(chipData)
       resetSelection()
