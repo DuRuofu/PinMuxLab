@@ -7,22 +7,22 @@
     "package": "QFN48",
     "flash": "512K",
     "sram": "32K",
-    "datasheet": "https://wch.cn"
+    "datasheet": "https://item.szlcsc.com/datasheet/CH582M/3226374.html?spm=sc.it.xds.a&lcsc_vid=FFMNAgUHQVNbBAFWTlNXAlQEFlhYX1xQFVlYUV1REVQxVlNeRlRWXlxRQVZYVzsOAxUeFF5JWAgaAglIBBsCBBcFWQIBCktVRVNYVFNSWQkaCgg%3D"
   },
   "package": {
     "type": "QFN48",
     "pinCount": 48,
     "pins": [
-      { "number": 0,  "name": "GND" },
-      { "number": 1,  "name": "VDCID" },
-      { "number": 2,  "name": "VSW" },
-      { "number": 3,  "name": "VDD33" },
-      { "number": 4,  "name": "PA7" },
-      { "number": 5,  "name": "PA8" },
-      { "number": 6,  "name": "PA9" },
-      { "number": 7,  "name": "PB9" },
-      { "number": 8,  "name": "PB8" },
-      { "number": 9,  "name": "PB17" },
+      { "number": 0, "name": "GND" },
+      { "number": 1, "name": "VDCID" },
+      { "number": 2, "name": "VSW" },
+      { "number": 3, "name": "VDD33" },
+      { "number": 4, "name": "PA7" },
+      { "number": 5, "name": "PA8" },
+      { "number": 6, "name": "PA9" },
+      { "number": 7, "name": "PB9" },
+      { "number": 8, "name": "PB8" },
+      { "number": 9, "name": "PB17" },
       { "number": 10, "name": "PB16" },
       { "number": 11, "name": "PB15" },
       { "number": 12, "name": "PB14" },
@@ -68,50 +68,75 @@
     "SYS": {
       "Description": "系统配置",
       "": {
-        "pinmaps": [{
-          "RST": "PB23",
-          "SWCLK": "PB14",
-          "SWDIO": "PB15",
-          "X32MI": "X32MI",
-          "X32MO": "X32MO",
-          "X32KI": "PA10",
-          "X32KO": "PA11"
-        }]
-      }
-    },
-    "BLE": {
-      "Description": "蓝牙 5.0 低功耗无线通信",
-      "BLE": {
-        "pinmaps": [{ "ANT": "ANT" }]
+        "pinmaps": [
+          {
+            "RST": "PB23",
+            "SWCLK": "PB14",
+            "SWDIO": "PB15",
+            "X32MI": "X32MI",
+            "X32MO": "X32MO",
+            "X32KI": "PA10",
+            "X32KO": "PA11"
+          }
+        ]
       }
     },
     "ADC": {
       "Description": "12位模数转换器（14路外部通道）",
       "ADC": {
-        "pinmaps": [{
-          "IN0": "PA4",  "IN1": "PA5",  "IN2": "PA12", "IN3": "PA13",
-          "IN4": "PA14", "IN5": "PA15", "IN6": "PA3",  "IN7": "PA2",
-          "IN8": "PA1",  "IN9": "PA0",  "IN10": "PA6", "IN11": "PA7",
-          "IN12": "PA8", "IN13": "PA9"
-        }]
+        "pinmaps": [
+          {
+            "IN0": "PA4",
+            "IN1": "PA5",
+            "IN2": "PA12",
+            "IN3": "PA13",
+            "IN4": "PA14",
+            "IN5": "PA15",
+            "IN6": "PA3",
+            "IN7": "PA2",
+            "IN8": "PA1",
+            "IN9": "PA0",
+            "IN10": "PA6",
+            "IN11": "PA7",
+            "IN12": "PA8",
+            "IN13": "PA9"
+          }
+        ]
       }
     },
     "TouchKey": {
       "Description": "14路电容触摸按键",
       "TKEY": {
-        "pinmaps": [{
-          "TK0": "PA4",  "TK1": "PA5",  "TK2": "PA12", "TK3": "PA13",
-          "TK4": "PA14", "TK5": "PA15", "TK6": "PA3",  "TK7": "PA2",
-          "TK8": "PA1",  "TK9": "PA0",  "TK10": "PA6", "TK11": "PA7",
-          "TK12": "PA8", "TK13": "PA9"
-        }]
+        "pinmaps": [
+          {
+            "TK0": "PA4",
+            "TK1": "PA5",
+            "TK2": "PA12",
+            "TK3": "PA13",
+            "TK4": "PA14",
+            "TK5": "PA15",
+            "TK6": "PA3",
+            "TK7": "PA2",
+            "TK8": "PA1",
+            "TK9": "PA0",
+            "TK10": "PA6",
+            "TK11": "PA7",
+            "TK12": "PA8",
+            "TK13": "PA9"
+          }
+        ]
       }
     },
     "UART": {
       "Description": "4组异步串口，内置8级FIFO，最高6Mbps",
       "UART0": {
         "pinmaps": [
-          { "TXD": "PB7", "RXD": "PB4", "CTS": "PB0", "RTS": "PB6", "DSR": "PB1", "DTR": "PB5", "RI": "PB2", "DCD": "PB3" },
+          {
+            "TXD": "PB7",
+            "RXD": "PB4",
+            "DSR": "PB1",
+            "DTR": "PB5"
+          },
           { "TXD": "PA14", "RXD": "PA15", "DSR": "PB14", "DTR": "PB15" }
         ]
       },
@@ -135,16 +160,11 @@
       }
     },
     "SPI": {
-      "Description": "2组SPI，SPI0支持主从+DMA，SPI1仅主机",
+      "Description": "组SPI，SPI0支持主从+DMA，SPI1仅主机",
       "SPI0": {
         "pinmaps": [
           { "NSS": "PA12", "SCK": "PA13", "MOSI": "PA14", "MISO": "PA15" },
           { "NSS": "PB12", "SCK": "PB13", "MOSI": "PB14", "MISO": "PB15" }
-        ]
-      },
-      "SPI1": {
-        "pinmaps": [
-          { "SCK": "PA0", "MOSI": "PA1", "MISO": "PA2" }
         ]
       }
     },
@@ -160,35 +180,32 @@
     "TIM": {
       "Description": "4组26位定时器，支持捕捉/PWM/DMA",
       "TMR0": {
-        "pinmaps": [
-          { "CH": "PA9" },
-          { "CH": "PB23" }
-        ]
+        "pinmaps": [{ "CH": "PA9" }, { "CH": "PB23" }]
       },
       "TMR1": {
-        "pinmaps": [
-          { "CH": "PA10" },
-          { "CH": "PB10" }
-        ]
+        "pinmaps": [{ "CH": "PA10" }, { "CH": "PB10" }]
       },
       "TMR2": {
-        "pinmaps": [
-          { "CH": "PA11" },
-          { "CH": "PB11" }
-        ]
+        "pinmaps": [{ "CH": "PA11" }, { "CH": "PB11" }]
       },
       "TMR3": {
-        "pinmaps": [
-          { "CH": "PA2" },
-          { "CH": "PB22" }
-        ]
+        "pinmaps": [{ "CH": "PB22" }, { "CH": "PA2" }]
       }
     },
     "PWM": {
       "Description": "8路独立8位PWM(PWM4~PWM11)",
       "PWM": {
         "pinmaps": [
-          { "OUT4": "PA12", "OUT5": "PA13", "OUT6": "PB0", "OUT7": "PB4", "OUT8": "PB6", "OUT9": "PB7", "OUT10": "PB14", "OUT11": "PB23" },
+          {
+            "OUT4": "PA12",
+            "OUT5": "PA13",
+            "OUT6": "PB0",
+            "OUT7": "PB4",
+            "OUT8": "PB6",
+            "OUT9": "PB7",
+            "OUT10": "PB14",
+            "OUT11": "PB23"
+          },
           { "OUT4": "PA6", "OUT5": "PA7", "OUT7": "PB1", "OUT8": "PB2", "OUT9": "PB3" }
         ]
       }
@@ -196,14 +213,10 @@
     "USB": {
       "Description": "2组USB2.0全速，支持主机/设备模式",
       "USB1": {
-        "pinmaps": [
-          { "DP": "PB11", "DM": "PB10" }
-        ]
+        "pinmaps": [{ "DP": "PB11", "DM": "PB10" }]
       },
       "USB2": {
-        "pinmaps": [
-          { "DP": "PB13", "DM": "PB12" }
-        ]
+        "pinmaps": [{ "DP": "PB13", "DM": "PB12" }]
       }
     }
   }
